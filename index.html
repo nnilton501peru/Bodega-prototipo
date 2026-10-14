@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bodega prototipo Mauricio V1.2</title>
+<style>
+:root { --verde:#1e7a4c; --fondo:#f6f3ec; --tarjeta:#ffffff; --texto:#1d1d1b; --gris:#6b6b66; --wa:#25D366; --rojo:#c0392b; --linea:#e6e1d4; }
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--fondo); color: var(--texto); padding-bottom: 200px; }
+header { background: var(--verde); color:#fff; padding: 20px 16px 16px; }
+header h1 { margin:0; font-size: 26px; font-weight: 800; }
+.version { font-size: 13px; font-weight: 600; background: rgba(255,255,255,.22); border-radius: 999px; padding: 2px 10px; vertical-align: middle; }
+header p { margin: 4px 0 0; font-size: 15px; opacity: .92; }
+.buscar { padding: 14px 16px 4px; }
+.buscar input { width:100%; padding: 14px; font-size: 17px; border: 2px solid #d9d4c7; border-radius: 12px; background:#fff; }
+.grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; padding: 12px 16px; }
+.card { position: relative; background: var(--tarjeta); border-radius: 16px; padding: 16px 10px 14px; text-align:center; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.card .emo { font-size: 44px; line-height: 1.1; }
+.card .nombre { font-size: 16px; font-weight: 600; margin: 8px 0 4px; min-height: 40px; }
+.card .precio { font-size: 24px; font-weight: 800; color: var(--verde); }
+.card .cu { font-size: 13px; color: var(--gris); }
+.card.agotado { background: #efece6; }
+.card.agotado .precio { color: var(--gris); text-decoration: line-through; }
+.card .dot { position: absolute; top: 12px; left: 12px; }
+.sello { display:inline-block; margin-top: 10px; background: var(--rojo); color:#fff; font-weight:700; font-size: 14px; padding: 6px 14px; border-radius: 999px; }
+.dot { display:inline-block; width:14px; height:14px; border-radius:50%; flex-shrink:0; }
+.controles { display:flex; justify-content:center; align-items:center; gap: 14px; margin-top: 10px; min-height: 44px; }
+.redondo { width: 44px; height: 44px; border-radius: 50%; border: 0; font-size: 24px; font-weight: 700; cursor: pointer; display:flex; align-items:center; justify-content:center; padding:0; flex-shrink:0; }
+.btn-menos { background: #efe9dc; color: var(--texto); }
+.btn-mas { background: var(--verde); color:#fff; }
+.cantidad { font-size: 22px; font-weight: 800; min-width: 28px; text-align:center; }
+.resumen { position: fixed; bottom:0; left:0; right:0; background:#fff; box-shadow: 0 -4px 14px rgba(0,0,0,.10); padding: 12px 16px 16px; }
+.resumen-fila { display:flex; justify-content:space-between; align-items:center; gap: 12px; }
+.etiqueta { font-size: 14px; color: var(--gris); }
+.total { font-size: 32px; font-weight: 800; line-height: 1.1; }
+.btn-ver { background:#fff; border: 2px solid var(--verde); color: var(--verde); border-radius: 12px; padding: 10px 14px; font-size: 15px; font-weight: 700; cursor:pointer; white-space: nowrap; }
+.btn-pedir { width:100%; margin-top: 10px; background: var(--wa); color:#fff; border:0; border-radius: 14px; padding: 16px; font-size: 19px; font-weight: 700; cursor:pointer; }
+.btn-pedir:disabled { background:#cfcfc9; cursor: default; }
+.velo { display:none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45); z-index: 10; align-items: flex-end; }
+.velo.abierto { display:flex; }
+.panel { background:#fff; width:100%; max-height: 88vh; border-radius: 18px 18px 0 0; display:flex; flex-direction:column; }
+.panel-cab { display:flex; justify-content:space-between; align-items:center; padding: 14px 16px; border-bottom: 1px solid var(--linea); }
+.panel-cab h2 { margin:0; font-size: 20px; font-weight: 800; }
+.panel-cab .redondo { background: #efe9dc; color: var(--texto); font-size: 22px; }
+.panel-cuerpo { overflow-y: auto; padding: 0 16px; }
+.item { padding: 14px 0; border-bottom: 1px solid var(--linea); }
+.item-fila { display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; }
+.item-izq { display:flex; gap: 10px; align-items:flex-start; }
+.item-izq .dot { margin-top: 4px; }
+.item-nombre { font-size: 16px; color: var(--texto); }
+.item-cu { font-size: 14px; color: var(--gris); }
+.item-sub { font-size: 22px; font-weight: 800; line-height: 1.1; white-space: nowrap; }
+.item-controles { display:flex; justify-content:space-between; align-items:center; margin-top: 10px; padding-left: 24px; }
+.item-cant { display:flex; align-items:center; gap: 12px; }
+.item-cant .redondo { width: 40px; height: 40px; font-size: 22px; }
+.quitar { background: transparent; border: 0; color: var(--rojo); font-size: 14px; font-weight: 700; cursor:pointer; padding: 6px; }
+.vacio { text-align:center; color: var(--gris); padding: 36px 8px; font-size: 16px; }
+.panel-pie { padding: 14px 16px 18px; border-top: 1px solid var(--linea); }
+.fila-total { display:flex; justify-content:space-between; align-items:baseline; }
+.total-grande { font-size: 32px; font-weight: 800; }
+.vaciar { display:block; margin: 10px auto 0; background: transparent; border: 0; color: var(--gris); font-size: 14px; text-decoration: underline; cursor: pointer; padding: 6px; }
+.mensaje { text-align:center; padding: 48px 20px; font-size: 17px; color: var(--gris); line-height: 1.5; }
+.mensaje button { margin-top: 14px; padding: 12px 20px; font-size: 16px; border-radius: 12px; border:0; background: var(--verde); color:#fff; cursor:pointer; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Bodega prototipo Mauricio <span class="version">V1.2</span></h1>
+  <p>Arma tu pedido y envíalo por WhatsApp</p>
+</header>
+<div class="buscar"><input id="buscar" type="search" placeholder="Buscar producto" aria-label="Buscar producto"></div>
+<div id="contenido"><div class="mensaje">Cargando productos…</div></div>
+
+<div class="resumen">
+  <div class="resumen-fila">
+    <div>
+      <div class="etiqueta"><span id="cantidad">0</span> productos en tu pedido</div>
+      <div class="total" id="total">S/ 0.00</div>
+    </div>
+    <button class="btn-ver" id="abrir-pedido">Ver mi pedido</button>
+  </div>
+  <button class="btn-pedir" id="pedir" disabled>Pedir por WhatsApp</button>
+</div>
+
+<div class="velo" id="velo">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="titulo-pedido">
+    <div class="panel-cab">
+      <h2 id="titulo-pedido">Tu pedido</h2>
+      <button class="redondo" id="cerrar-pedido" aria-label="Cerrar">×</button>
+    </div>
+    <div class="panel-cuerpo" id="lista-pedido"></div>
+    <div class="panel-pie">
+      <div class="fila-total">
+        <span class="etiqueta">Total</span>
+        <span class="total-grande" id="total-panel">S/ 0.00</span>
+      </div>
+      <button class="btn-pedir" id="pedir-panel" disabled>Pedir por WhatsApp</button>
+      <button class="vaciar" id="vaciar">Vaciar pedido</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- inicio funciones puras
+const HOJA_ID = '1zUEvUneykIT7dbi2pO5AZwpBevyEJ_7WFc4-7VE6mJc';
+const WHATSAPP = '51959434743'; // número del celular vendedor (prueba), con 51 y sin +
+const URL_HOJA = 'https://docs.google.com/spreadsheets/d/' + HOJA_ID + '/gviz/tq?tqx=out:csv';
+const ANCHO_TICKET = 32;
+const PALETA = ['#D85A30', '#1D9E75', '#7F77DD', '#BA7517', '#378ADD', '#D4537E', '#639922', '#E24B4A'];
+const COLORES_FIJOS = [['gaseosa', '#D85A30'], ['arroz', '#1D9E75'], ['leche', '#7F77DD']];
+const EMOJIS = [
+  ['gaseosa', '🥤'], ['agua', '💧'], ['piqueo', '🍿'], ['leche', '🥛'], ['panet', '🍞'],
+  ['afeitad', '🪒'], ['arroz', '🍚'], ['azucar', '🧂'], ['aceite', '🫒'], ['fideo', '🍝'],
+  ['huevo', '🥚'], ['galleta', '🍪'], ['atun', '🐟'], ['detergente', '🧴'], ['caramelo', '🍬'],
+  ['papel', '🧻'], ['chocolate', '🍫']
+];
+
+function normalizar(t) {
+  return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+}
+
+function escapar(t) {
+  return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function parseCSV(texto) {
+  texto = texto.replace(/^\uFEFF/, '');
+  const filas = [];
+  let fila = [], campo = '', dentro = false;
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i];
+    if (dentro) {
+      if (c === '"' && texto[i + 1] === '"') { campo += '"'; i++; }
+      else if (c === '"') dentro = false;
+      else campo += c;
+    } else if (c === '"') {
+      dentro = true;
+    } else if (c === ',') {
+      fila.push(campo); campo = '';
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && texto[i + 1] === '\n') i++;
+      fila.push(campo); filas.push(fila); fila = []; campo = '';
+    } else {
+      campo += c;
+    }
+  }
+  if (campo !== '' || fila.length) { fila.push(campo); filas.push(fila); }
+  return filas.filter(f => f.some(x => x.trim() !== ''));
+}
+
+function leerProductos(texto) {
+  const filas = parseCSV(texto);
+  if (filas.length < 2) return [];
+  const cab = filas[0].map(normalizar);
+  const iNom = cab.indexOf('producto');
+  const iPre = cab.indexOf('precio');
+  const iAgo = cab.indexOf('agotado');
+  if (iNom < 0 || iPre < 0) throw new Error('Faltan las columnas Producto o Precio');
+  return filas.slice(1).map(f => ({
+    nombre: (f[iNom] || '').trim(),
+    precio: parseFloat(String(f[iPre] || '').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
+    agotado: iAgo >= 0 && normalizar(f[iAgo] || '') === 'si'
+  })).filter(p => p.nombre);
+}
+
+function colorPara(nombre) {
+  const n = normalizar(nombre);
+  const fijo = COLORES_FIJOS.find(([clave]) => n.includes(clave));
+  if (fijo) return fijo[1];
+  let h = 0;
+  for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return PALETA[h % PALETA.length];
+}
+
+function emojiPara(nombre) {
+  const n = normalizar(nombre);
+  const h = EMOJIS.find(([clave]) => n.includes(clave));
+  return h ? h[1] : '🛒';
+}
+
+function soles(n) {
+  return 'S/ ' + n.toFixed(2);
+}
+
+function armarMensaje(items) {
+  const total = items.reduce((s, p) => s + p.precio * p.cantidad, 0);
+  const lineas = ['TOTAL: ' + soles(total), '-'.repeat(ANCHO_TICKET)];
+  items.forEach((p, idx) => {
+    if (idx > 0) lineas.push('');
+    lineas.push('• ' + p.cantidad + ' x ' + p.nombre);
+    const izq = '    ' + soles(p.precio) + ' c/u';
+    const der = soles(p.precio * p.cantidad);
+    const espacio = Math.max(1, ANCHO_TICKET - izq.length - der.length);
+    lineas.push(izq + ' '.repeat(espacio) + der);
+  });
+  return '```\n' + lineas.join('\n') + '\n```';
+}
+// --- fin funciones puras
+
+let productos = [];
+const carrito = {};
+
+function pedidoActual() {
+  return Object.keys(carrito).map(k => Object.assign({}, productos[k], { cantidad: carrito[k], indice: Number(k) }));
+}
+
+function tarjeta(p, i) {
+  const q = carrito[i] || 0;
+  const dot = '<span class="dot" style="background:' + colorPara(p.nombre) + '" aria-hidden="true"></span>';
+  const emo = '<div class="emo" aria-hidden="true">' + emojiPara(p.nombre) + '</div>';
+  const nombre = '<div class="nombre">' + escapar(p.nombre) + '</div>';
+  const precio = '<div><span class="precio">' + soles(p.precio) + '</span> <span class="cu">c/u</span></div>';
+  if (p.agotado) {
+    return '<div class="card agotado">' + dot + emo + nombre + precio + '<span class="sello">Agotado</span></div>';
+  }
+  let controles;
+  if (q === 0) {
+    controles = '<div class="controles"><button class="redondo btn-mas" aria-label="Agregar uno" onclick="cambiar(' + i + ', 1)">+</button></div>';
+  } else {
+    controles = '<div class="controles">' +
+      '<button class="redondo btn-menos" aria-label="Quitar uno" onclick="cambiar(' + i + ', -1)">−</button>' +
+      '<span class="cantidad">' + q + '</span>' +
+      '<button class="redondo btn-mas" aria-label="Agregar uno" onclick="cambiar(' + i + ', 1)">+</button>' +
+      '</div>';
+  }
+  return '<div class="card">' + dot + emo + nombre + precio + controles + '</div>';
+}
+
+function renderGrid() {
+  if (!productos.length) return;
+  const busq = normalizar(document.getElementById('buscar').value);
+  const visibles = productos.map((p, i) => ({ p, i })).filter(({ p }) => normalizar(p.nombre).includes(busq));
+  document.getElementById('contenido').innerHTML = visibles.length
+    ? '<div class="grid">' + visibles.map(({ p, i }) => tarjeta(p, i)).join('') + '</div>'
+    : '<div class="mensaje">No encontramos ese producto.</div>';
+}
+
+function renderPedido() {
+  const items = pedidoActual();
+  const cont = document.getElementById('lista-pedido');
+  if (!items.length) {
+    cont.innerHTML = '<div class="vacio">Todavía no agregaste productos.</div>';
+    return;
+  }
+  cont.innerHTML = items.map(p => {
+    const i = p.indice;
+    return '<div class="item">' +
+      '<div class="item-fila">' +
+        '<div class="item-izq">' +
+          '<span class="dot" style="background:' + colorPara(p.nombre) + '" aria-hidden="true"></span>' +
+          '<div><div class="item-nombre">' + escapar(p.nombre) + '</div>' +
+          '<div class="item-cu">' + soles(p.precio) + ' c/u</div></div>' +
+        '</div>' +
+        '<div class="item-sub">' + soles(p.precio * p.cantidad) + '</div>' +
+      '</div>' +
+      '<div class="item-controles">' +
+        '<div class="item-cant">' +
+          '<button class="redondo btn-menos" aria-label="Quitar uno" onclick="cambiar(' + i + ', -1)">−</button>' +
+          '<span class="cantidad">' + p.cantidad + '</span>' +
+          '<button class="redondo btn-mas" aria-label="Agregar uno" onclick="cambiar(' + i + ', 1)">+</button>' +
+        '</div>' +
+        '<button class="quitar" onclick="quitar(' + i + ')">Quitar</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function actualizarResumen() {
+  const items = pedidoActual();
+  const total = items.reduce((s, p) => s + p.precio * p.cantidad, 0);
+  document.getElementById('cantidad').textContent = items.length;
+  document.getElementById('total').textContent = soles(total);
+  document.getElementById('total-panel').textContent = soles(total);
+  document.getElementById('pedir').disabled = items.length === 0;
+  document.getElementById('pedir-panel').disabled = items.length === 0;
+}
+
+function render() {
+  renderGrid();
+  renderPedido();
+  actualizarResumen();
+}
+
+function cambiar(i, d) {
+  const nueva = Math.max(0, (carrito[i] || 0) + d);
+  if (nueva) carrito[i] = nueva; else delete carrito[i];
+  render();
+}
+
+function quitar(i) {
+  delete carrito[i];
+  render();
+}
+
+function vaciar() {
+  if (!Object.keys(carrito).length) return;
+  if (!confirm('¿Vaciar todo el pedido?')) return;
+  Object.keys(carrito).forEach(k => delete carrito[k]);
+  render();
+}
+
+function abrirPedido() {
+  renderPedido();
+  document.getElementById('velo').classList.add('abierto');
+}
+
+function cerrarPedido() {
+  document.getElementById('velo').classList.remove('abierto');
+}
+
+function enviarPedido() {
+  const items = pedidoActual();
+  if (!items.length) return;
+  if (WHATSAPP.indexOf('X') >= 0) {
+    alert('Falta poner el número de WhatsApp en el código.');
+    return;
+  }
+  window.location.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(armarMensaje(items));
+}
+
+document.getElementById('abrir-pedido').addEventListener('click', abrirPedido);
+document.getElementById('cerrar-pedido').addEventListener('click', cerrarPedido);
+document.getElementById('velo').addEventListener('click', e => { if (e.target.id === 'velo') cerrarPedido(); });
+document.getElementById('vaciar').addEventListener('click', vaciar);
+document.getElementById('pedir').addEventListener('click', enviarPedido);
+document.getElementById('pedir-panel').addEventListener('click', enviarPedido);
+document.getElementById('buscar').addEventListener('input', renderGrid);
+
+async function cargar() {
+  const cont = document.getElementById('contenido');
+  cont.innerHTML = '<div class="mensaje">Cargando productos…</div>';
+  try {
+    const r = await fetch(URL_HOJA);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    productos = leerProductos(await r.text());
+    if (!productos.length) throw new Error('Hoja vacía');
+    render();
+  } catch (e) {
+    cont.innerHTML = '<div class="mensaje">No pudimos cargar los productos.<br>Revisa tu internet y vuelve a intentar.<br><button onclick="cargar()">Reintentar</button></div>';
+  }
+}
+
+actualizarResumen();
+cargar();
+</script>
+</body>
+</html>
