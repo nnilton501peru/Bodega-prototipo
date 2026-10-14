@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bodega prototipo Mauricio V1.1</title>
+<style>
+:root { --verde:#1e7a4c; --fondo:#f6f3ec; --tarjeta:#ffffff; --texto:#1d1d1b; --gris:#6b6b66; --wa:#25D366; --rojo:#c0392b; }
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--fondo); color: var(--texto); padding-bottom: 180px; }
+header { background: var(--verde); color:#fff; padding: 20px 16px 16px; }
+header h1 { margin:0; font-size: 28px; font-weight: 800; }
+header p { margin: 4px 0 0; font-size: 15px; opacity: .92; }
+.buscar { padding: 14px 16px 4px; }
+.buscar input { width:100%; padding: 14px; font-size: 17px; border: 2px solid #d9d4c7; border-radius: 12px; background:#fff; }
+.grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; padding: 12px 16px; }
+.card { background: var(--tarjeta); border-radius: 16px; padding: 14px 10px; text-align:center; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.card .emo { font-size: 44px; line-height: 1.1; }
+.card .nombre { font-size: 16px; font-weight: 600; margin: 8px 0 4px; min-height: 40px; }
+.card .precio { font-size: 24px; font-weight: 800; color: var(--verde); }
+.card.agotado { background: #efece6; }
+.card.agotado .precio { color: var(--gris); text-decoration: line-through; }
+.sello { display:inline-block; margin-top: 10px; background: var(--rojo); color:#fff; font-weight:700; font-size: 14px; padding: 6px 14px; border-radius: 999px; }
+.controles { display:flex; justify-content:center; align-items:center; gap: 14px; margin-top: 10px; }
+.controles button { width: 46px; height: 46px; border-radius: 50%; border: 0; font-size: 26px; font-weight: 700; cursor: pointer; }
+.btn-menos { background: #efe9dc; color: var(--texto); }
+.btn-mas { background: var(--verde); color:#fff; }
+.cantidad { font-size: 24px; font-weight: 800; min-width: 28px; }
+.cantidad.cero { color: #bdbdb5; }
+.resumen { position: fixed; bottom: 0; left: 0; right: 0; background:#fff; box-shadow: 0 -4px 14px rgba(0,0,0,.10); padding: 14px 16px 18px; }
+.resumen .etiqueta { font-size: 15px; color: var(--gris); }
+.resumen .total { font-size: 38px; font-weight: 800; line-height: 1.1; }
+.btn-pedir { width:100%; margin-top: 10px; background: var(--wa); color:#fff; border:0; border-radius: 14px; padding: 16px; font-size: 19px; font-weight: 700; cursor:pointer; }
+.btn-pedir:disabled { background:#cfcfc9; cursor: default; }
+.version { font-size: 13px; font-weight: 600; background: rgba(255,255,255,.22); border-radius: 999px; padding: 2px 10px; vertical-align: middle; }
+.mensaje { text-align:center; padding: 48px 20px; font-size: 17px; color: var(--gris); line-height: 1.5; }
+.mensaje button { margin-top: 14px; padding: 12px 20px; font-size: 16px; border-radius: 12px; border:0; background: var(--verde); color:#fff; cursor:pointer; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Bodega prototipo Mauricio <span class="version">V1.1</span></h1>
+  <p>Arma tu pedido y envíalo por WhatsApp</p>
+</header>
+<div class="buscar"><input id="buscar" type="search" placeholder="Buscar producto" aria-label="Buscar producto"></div>
+<div id="contenido"><div class="mensaje">Cargando productos…</div></div>
+<div class="resumen">
+  <div class="etiqueta"><span id="cantidad">0</span> productos en tu pedido</div>
+  <div class="total" id="total">S/ 0.00</div>
+  <button class="btn-pedir" id="pedir" disabled>Pedir por WhatsApp</button>
+</div>
+<script>
+// --- inicio funciones puras
+const HOJA_ID = '1zUEvUneykIT7dbi2pO5AZwpBevyEJ_7WFc4-7VE6mJc';
+const WHATSAPP = '51959434743'; // número del celular vendedor (prueba), con 51 y sin +
+const URL_HOJA = 'https://docs.google.com/spreadsheets/d/' + HOJA_ID + '/gviz/tq?tqx=out:csv';
+
+function normalizar(t) {
+  return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+}
+
+function escapar(t) {
+  return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function parseCSV(texto) {
+  texto = texto.replace(/^\uFEFF/, '');
+  const filas = [];
+  let fila = [], campo = '', dentro = false;
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i];
+    if (dentro) {
+      if (c === '"' && texto[i + 1] === '"') { campo += '"'; i++; }
+      else if (c === '"') dentro = false;
+      else campo += c;
+    } else if (c === '"') {
+      dentro = true;
+    } else if (c === ',') {
+      fila.push(campo); campo = '';
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && texto[i + 1] === '\n') i++;
+      fila.push(campo); filas.push(fila); fila = []; campo = '';
+    } else {
+      campo += c;
+    }
+  }
+  if (campo !== '' || fila.length) { fila.push(campo); filas.push(fila); }
+  return filas.filter(f => f.some(x => x.trim() !== ''));
+}
+
+function leerProductos(texto) {
+  const filas = parseCSV(texto);
+  if (filas.length < 2) return [];
+  const cab = filas[0].map(normalizar);
+  const iNom = cab.indexOf('producto');
+  const iPre = cab.indexOf('precio');
+  const iAgo = cab.indexOf('agotado');
+  if (iNom < 0 || iPre < 0) throw new Error('Faltan las columnas Producto o Precio');
+  return filas.slice(1).map(f => ({
+    nombre: (f[iNom] || '').trim(),
+    precio: parseFloat(String(f[iPre] || '').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
+    agotado: iAgo >= 0 && normalizar(f[iAgo] || '') === 'si'
+  })).filter(p => p.nombre);
+}
+
+const EMOJIS = [
+  ['gaseosa', '🥤'], ['agua', '💧'], ['piqueo', '🍿'], ['leche', '🥛'], ['panet', '🍞'],
+  ['afeitad', '🪒'], ['arroz', '🍚'], ['azucar', '🧂'], ['aceite', '🫒'], ['fideo', '🍝'],
+  ['huevo', '🥚'], ['galleta', '🍪'], ['atun', '🐟'], ['detergente', '🧴'], ['caramelo', '🍬'],
+  ['papel', '🧻'], ['chocolate', '🍫']
+];
+
+function emojiPara(nombre) {
+  const n = normalizar(nombre);
+  const h = EMOJIS.find(([clave]) => n.includes(clave));
+  return h ? h[1] : '🛒';
+}
+
+function soles(n) {
+  return 'S/ ' + n.toFixed(2);
+}
+
+function armarMensaje(items) {
+  const lineas = items.map(p => p.cantidad + ' x ' + p.nombre + ' (' + soles(p.precio * p.cantidad) + ')');
+  const total = items.reduce((s, p) => s + p.precio * p.cantidad, 0);
+  return 'Hola, quiero pedir:\n' + lineas.join('\n') + '\n\nTotal: ' + soles(total);
+}
+// --- fin funciones puras
+
+let productos = [];
+const carrito = {};
+
+function pedidoActual() {
+  return Object.keys(carrito).map(k => Object.assign({}, productos[k], { cantidad: carrito[k] }));
+}
+
+function tarjeta(p, i) {
+  const q = carrito[i] || 0;
+  const emo = '<div class="emo">' + emojiPara(p.nombre) + '</div>';
+  const nombre = '<div class="nombre">' + escapar(p.nombre) + '</div>';
+  const precio = '<div class="precio">' + soles(p.precio) + '</div>';
+  if (p.agotado) {
+    return '<div class="card agotado">' + emo + nombre + precio + '<span class="sello">Agotado</span></div>';
+  }
+  const controles = '<div class="controles">' +
+    '<button class="btn-menos" aria-label="Quitar uno" onclick="cambiar(' + i + ', -1)">−</button>' +
+    '<span class="cantidad ' + (q ? '' : 'cero') + '">' + q + '</span>' +
+    '<button class="btn-mas" aria-label="Agregar uno" onclick="cambiar(' + i + ', 1)">+</button>' +
+    '</div>';
+  return '<div class="card">' + emo + nombre + precio + controles + '</div>';
+}
+
+function render() {
+  if (!productos.length) return;
+  const busq = normalizar(document.getElementById('buscar').value);
+  const visibles = productos.map((p, i) => ({ p, i })).filter(({ p }) => normalizar(p.nombre).includes(busq));
+  const cont = document.getElementById('contenido');
+  if (!visibles.length) {
+    cont.innerHTML = '<div class="mensaje">No encontramos ese producto.</div>';
+  } else {
+    cont.innerHTML = '<div class="grid">' + visibles.map(({ p, i }) => tarjeta(p, i)).join('') + '</div>';
+  }
+  actualizarResumen();
+}
+
+function actualizarResumen() {
+  const items = pedidoActual();
+  const total = items.reduce((s, p) => s + p.precio * p.cantidad, 0);
+  document.getElementById('cantidad').textContent = items.length;
+  document.getElementById('total').textContent = soles(total);
+  document.getElementById('pedir').disabled = items.length === 0;
+}
+
+function cambiar(i, d) {
+  const nueva = Math.max(0, (carrito[i] || 0) + d);
+  if (nueva) carrito[i] = nueva; else delete carrito[i];
+  render();
+}
+
+document.getElementById('pedir').addEventListener('click', () => {
+  const items = pedidoActual();
+  if (!items.length) return;
+  if (WHATSAPP.indexOf('X') >= 0) {
+    alert('Falta poner el número de WhatsApp en el código.');
+    return;
+  }
+  window.location.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(armarMensaje(items));
+});
+
+document.getElementById('buscar').addEventListener('input', render);
+
+async function cargar() {
+  const cont = document.getElementById('contenido');
+  cont.innerHTML = '<div class="mensaje">Cargando productos…</div>';
+  try {
+    const r = await fetch(URL_HOJA);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    productos = leerProductos(await r.text());
+    if (!productos.length) throw new Error('Hoja vacía');
+    render();
+  } catch (e) {
+    cont.innerHTML = '<div class="mensaje">No pudimos cargar los productos.<br>Revisa tu internet y vuelve a intentar.<br><button onclick="cargar()">Reintentar</button></div>';
+  }
+}
+
+cargar();
+</script>
+</body>
+</html>
