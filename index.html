@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bodega prototipo Mauricio V1.4</title>
+<title>Bodega prototipo Mauricio V1.5</title>
 <style>
 :root { --verde:#1e7a4c; --verde-claro:#e8f5ec; --verde-linea:#c9e6d4; --fondo:#f6f3ec; --tarjeta:#ffffff; --texto:#1d1d1b; --gris:#5f5f5a; --wa:#128C4A; --rojo:#b03a2e; --linea:#e6e1d4; }
 * { box-sizing: border-box; }
@@ -32,12 +32,12 @@ header p { margin: 4px 0 0; font-size: 16px; }
 .btn-menos { background:#efe9dc; color:var(--texto); }
 .btn-mas { background:var(--verde); color:#fff; }
 .cantidad { font-size: 22px; font-weight: 800; min-width: 28px; text-align:center; }
-.panel { position: fixed; left:0; right:0; bottom:0; background: var(--verde-claro); box-shadow: 0 -4px 14px rgba(0,0,0,.14); border-radius: 18px 18px 0 0; padding: 12px 14px 14px; z-index: 5; }
+.panel { position: fixed; left:0; right:0; bottom:0; background: var(--verde); box-shadow: 0 -4px 14px rgba(0,0,0,.14); border-radius: 18px 18px 0 0; padding: 12px 14px 14px; z-index: 5; }
 .panel-cab { display:flex; justify-content:space-between; align-items:center; gap: 8px; }
-.panel-cab h2 { margin:0; font-size: 20px; font-weight: 800; }
+.panel-cab h2 { margin:0; font-size: 20px; font-weight: 800; color: #ffffff; }
 .panel-der { display:flex; align-items:center; gap: 8px; }
-.info { font-size: 15px; color: var(--gris); }
-.vaciar { background: transparent; border: 0; color: var(--gris); font-size: 15px; text-decoration: underline; cursor: pointer; padding: 4px; }
+.info { font-size: 15px; color: #ffffff; }
+.vaciar { background: transparent; border: 0; color: #ffffff; font-size: 15px; text-decoration: underline; cursor: pointer; padding: 4px; }
 .aviso { display:none; background:#fff4d6; color:#5c4300; border-radius: 10px; padding: 8px 10px; font-size: 15px; margin-top: 8px; }
 .aviso.visible { display:block; }
 .panel-lista { max-height: 32vh; overflow-y: auto; margin-top: 8px; }
@@ -51,20 +51,20 @@ header p { margin: 4px 0 0; font-size: 16px; }
 .item-controles { display:flex; justify-content:space-between; align-items:center; margin-top: 6px; padding-left: 22px; }
 .item-cant { display:flex; align-items:center; gap: 10px; }
 .quitar { background: transparent; border: 0; color: var(--rojo); font-size: 15px; font-weight: 700; cursor:pointer; padding: 6px; }
-.vacio { text-align:center; color: var(--gris); font-size: 16px; padding: 14px 8px; }
-.panel-pie { border-top: 1px solid var(--verde-linea); margin-top: 8px; padding-top: 10px; }
+.vacio { text-align:center; color: #ffffff; font-size: 16px; padding: 14px 8px; }
+.panel-pie { border-top: 1px solid rgba(255,255,255,.35); margin-top: 8px; padding-top: 10px; }
 .fila-total { display:flex; justify-content:space-between; align-items:baseline; }
-.etiqueta { font-size: 16px; color: var(--gris); }
-.total { font-size: 34px; font-weight: 800; line-height: 1.1; }
-.btn-pedir { width:100%; margin-top: 8px; background: var(--wa); color:#fff; border:0; border-radius: 14px; padding: 15px; font-size: 19px; font-weight: 700; cursor:pointer; }
-.btn-pedir:disabled { background:#b9bdb5; cursor: default; }
+.etiqueta { font-size: 16px; color: #ffffff; }
+.total { font-size: 34px; font-weight: 800; line-height: 1.1; color: #ffffff; }
+.btn-pedir { width:100%; margin-top: 8px; background: #ffffff; color: var(--verde); border:0; border-radius: 14px; padding: 15px; font-size: 19px; font-weight: 700; cursor:pointer; }
+.btn-pedir:disabled { background:#cfd8d2; color:#5f5f5a; cursor: default; }
 .mensaje { text-align:center; padding: 48px 20px; font-size: 18px; color: var(--gris); line-height: 1.5; }
 .mensaje button { margin-top: 14px; padding: 12px 20px; font-size: 17px; border-radius: 12px; border:0; background: var(--verde); color:#fff; cursor:pointer; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Bodega prototipo Mauricio <span class="version">V1.4</span></h1>
+  <h1>Bodega prototipo Mauricio <span class="version">V1.5</span></h1>
   <p>Escoge tus productos y mira tu pedido abajo</p>
 </header>
 <div class="buscar"><input id="buscar" type="search" placeholder="Buscar producto" aria-label="Buscar producto"></div>
