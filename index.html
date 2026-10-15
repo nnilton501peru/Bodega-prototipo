@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bodega prototipo Mauricio V1.9</title>
+<title>Bodega prototipo Mauricio V1.10</title>
 <style>
 :root { --turq:#0e7490; --cielo:#38bdf8; --rosa:#f472b6; --ambar:#fbbf24; --violeta:#a78bfa; --naranja:#f97316; --verdeok:#22c55e; --fondo:#fff8ea; --texto:#1f2937; --gris:#6b7280; --rojo:#dc2626; }
 * { box-sizing: border-box; }
@@ -30,8 +30,8 @@ header p { margin: 4px 0 0; font-size: 15px; color: #e0f7f4; }
 .titulo-cat { font-size: 20px; font-weight: 700; color: var(--texto); padding: 14px 16px 0; }
 .grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; padding: 10px 12px 12px; }
 .card { background:#ffffff; border-radius: 16px; overflow:hidden; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
-.banda { position: relative; height: 96px; display:flex; align-items:center; justify-content:center; }
-.banda .emo { font-size: 40px; line-height: 1; }
+.banda { position: relative; height: 170px; display:flex; align-items:center; justify-content:center; }
+.banda .emo { font-size: 64px; line-height: 1; }
 .banda img { position:absolute; top: 6px; left: 6px; width: calc(100% - 12px); height: calc(100% - 12px); object-fit: contain; background:#ffffff; border-radius: 10px; }
 .card.agotado .banda { background: #d1d5db !important; }
 .cuerpo { padding: 8px 10px 10px; }
@@ -116,7 +116,7 @@ header p { margin: 4px 0 0; font-size: 15px; color: #e0f7f4; }
 <header>
   <div class="cab">
     <div>
-      <h1>Bodega prototipo Mauricio <span class="version">V1.9</span></h1>
+      <h1>Bodega prototipo Mauricio <span class="version">V1.10</span></h1>
       <p>Helados, bebidas y snacks por WhatsApp</p>
     </div>
     <button class="btn-historial" onclick="abrirHistorial()">📋 Historial</button>
