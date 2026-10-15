@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bodega prototipo Mauricio V1.8</title>
+<title>Bodega prototipo Mauricio V1.9</title>
 <style>
 :root { --turq:#0e7490; --cielo:#38bdf8; --rosa:#f472b6; --ambar:#fbbf24; --violeta:#a78bfa; --naranja:#f97316; --verdeok:#22c55e; --fondo:#fff8ea; --texto:#1f2937; --gris:#6b7280; --rojo:#dc2626; }
 * { box-sizing: border-box; }
@@ -96,13 +96,27 @@ header p { margin: 4px 0 0; font-size: 15px; color: #e0f7f4; }
 .total-h { font-size: 18px; font-weight: 700; color: var(--turq); }
 .btn-repetir { background: var(--turq); color:#ffffff; border:0; border-radius: 12px; padding: 10px 12px; font-size: 15px; font-weight: 700; cursor:pointer; }
 .vacio-h { text-align:center; color: var(--gris); padding: 30px 10px; font-size: 17px; }
+.velo-prod-hoja { background:#ffffff; width:100%; border-radius: 18px 18px 0 0; overflow:hidden; padding-bottom: 14px; }
+.prod-cab { display:flex; justify-content:flex-end; padding: 10px 12px 0; }
+.btn-x { background:#f3f4f6; color:#1f2937; border:0; border-radius:999px; width:40px; height:40px; font-size:22px; line-height:1; cursor:pointer; }
+.prod-foto { position: relative; background:#ffffff; height: 280px; margin: 0 14px; border-radius: 14px; border: 1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.prod-foto .emo { font-size: 96px; line-height: 1; }
+.prod-foto img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; background:#ffffff; }
+.prod-cuerpo { padding: 14px 16px 6px; }
+.prod-nombre { font-size: 22px; font-weight: 700; color: var(--texto); }
+.prod-cu { font-size: 15px; color: var(--gris); margin-top: 2px; }
+.prod-en { font-size: 15px; color: #0e7490; margin-top: 6px; min-height: 20px; }
+.prod-fila { display:flex; justify-content:space-between; align-items:center; margin-top: 12px; gap: 10px; }
+.prod-precio { font-size: 30px; font-weight: 700; color: var(--turq); }
+.btn-agregar { background:#0ea5e9; color:#ffffff; border:0; border-radius: 999px; padding: 14px 22px; font-size: 17px; font-weight: 700; cursor:pointer; }
+.btn-agregar:disabled { background:#d1d5db; color:#6b7280; cursor: default; }
 </style>
 </head>
 <body>
 <header>
   <div class="cab">
     <div>
-      <h1>Bodega prototipo Mauricio <span class="version">V1.8</span></h1>
+      <h1>Bodega prototipo Mauricio <span class="version">V1.9</span></h1>
       <p>Helados, bebidas y snacks por WhatsApp</p>
     </div>
     <button class="btn-historial" onclick="abrirHistorial()">📋 Historial</button>
@@ -157,6 +171,22 @@ header p { margin: 4px 0 0; font-size: 15px; color: #e0f7f4; }
       <button class="btn-cerrar" onclick="cerrarHistorial()">Cerrar</button>
     </div>
     <div class="hoja-cuerpo" id="lista-historial"></div>
+  </div>
+</div>
+
+<div class="velo" id="velo-producto" onclick="if (event.target.id === 'velo-producto') cerrarProducto()">
+  <div class="velo-prod-hoja" role="dialog" aria-modal="true" aria-labelledby="prod-nombre">
+    <div class="prod-cab"><button class="btn-x" aria-label="Cerrar" onclick="cerrarProducto()">×</button></div>
+    <div class="prod-foto" id="prod-foto"></div>
+    <div class="prod-cuerpo">
+      <div class="prod-nombre" id="prod-nombre"></div>
+      <div class="prod-cu" id="prod-cu"></div>
+      <div class="prod-en" id="prod-en"></div>
+      <div class="prod-fila">
+        <span class="prod-precio" id="prod-precio"></span>
+        <button class="btn-agregar" id="prod-agregar" onclick="agregarDesdeVista()">+ Agregar</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -362,19 +392,19 @@ function renderCategorias() {
   ).join('');
 }
 
-function bandaHTML(p) {
+function bandaHTML(p, i) {
   const emo = '<span class="emo" aria-hidden="true">' + emojiPara(p.nombre) + '</span>';
   const img = p.foto
     ? '<img src="' + escapar(encodeURI(p.foto)) + '" alt="' + escapar(p.nombre) + '" loading="lazy" onerror="this.style.display=\'none\'">'
     : '';
-  return '<div class="banda" style="background:' + colorCategoria(p) + '">' + emo + img + '</div>';
+  return '<div class="banda" role="button" tabindex="0" aria-label="Ver ' + escapar(p.nombre) + '" style="background:' + colorCategoria(p) + ';cursor:pointer" onclick="abrirProducto(' + i + ')">' + emo + img + '</div>';
 }
 
 // En la cuadrícula solo se agrega; para cambiar cantidades se usa el carrito.
 function tarjeta(p, i) {
   const q = carrito[i] || 0;
   if (p.agotado) {
-    return '<div class="card agotado">' + bandaHTML(p) +
+    return '<div class="card agotado">' + bandaHTML(p, i) +
       '<div class="cuerpo"><div class="nombre">' + escapar(p.nombre) + '</div>' +
       '<div class="cu">' + soles(p.precio) + ' c/u</div>' +
       '<span class="sello">Agotado</span></div></div>';
@@ -382,7 +412,7 @@ function tarjeta(p, i) {
   const boton = q === 0
     ? '<button class="btn-add azul" aria-label="Agregar ' + escapar(p.nombre) + '" onclick="cambiar(' + i + ', 1)">+</button>'
     : '<button class="btn-add verde" aria-label="Agregar otro ' + escapar(p.nombre) + '" onclick="cambiar(' + i + ', 1)">✓ ' + q + '</button>';
-  return '<div class="card">' + bandaHTML(p) +
+  return '<div class="card">' + bandaHTML(p, i) +
     '<div class="cuerpo"><div class="nombre">' + escapar(p.nombre) + '</div>' +
     '<div class="cu">' + soles(p.precio) + ' c/u</div>' +
     '<div class="fila-precio"><span class="precio">' + soles(p.precio * q || p.precio) + '</span>' + boton + '</div>' +
@@ -576,6 +606,44 @@ function repetirPedido(idx) {
   abrirCarrito();
   if (faltan === 1) mostrarAviso('Un producto ya no está disponible y no se agregó.');
   else if (faltan > 1) mostrarAviso(faltan + ' productos ya no están disponibles y no se agregaron.');
+}
+
+let productoVista = null;
+
+function abrirProducto(i) {
+  if (!productos[i]) return;
+  productoVista = i;
+  renderProducto();
+  document.getElementById('velo-producto').classList.add('abierto');
+}
+
+function cerrarProducto() {
+  document.getElementById('velo-producto').classList.remove('abierto');
+  productoVista = null;
+}
+
+function renderProducto() {
+  if (productoVista === null) return;
+  const p = productos[productoVista];
+  const q = carrito[productoVista] || 0;
+  const emo = '<span class="emo" aria-hidden="true">' + emojiPara(p.nombre) + '</span>';
+  const img = p.foto
+    ? '<img src="' + escapar(encodeURI(p.foto)) + '" alt="' + escapar(p.nombre) + '" loading="lazy" onerror="this.style.display=\'none\'">'
+    : '';
+  document.getElementById('prod-foto').innerHTML = emo + img;
+  document.getElementById('prod-nombre').textContent = p.nombre;
+  document.getElementById('prod-cu').textContent = soles(p.precio) + ' c/u';
+  document.getElementById('prod-en').textContent = q ? 'En tu pedido: ' + q : '';
+  document.getElementById('prod-precio').textContent = soles(p.precio);
+  const boton = document.getElementById('prod-agregar');
+  boton.disabled = p.agotado;
+  boton.textContent = p.agotado ? 'Agotado' : '+ Agregar';
+}
+
+function agregarDesdeVista() {
+  if (productoVista === null || productos[productoVista].agotado) return;
+  cambiar(productoVista, 1);
+  renderProducto();
 }
 
 document.getElementById('buscar').addEventListener('input', renderGrid);
