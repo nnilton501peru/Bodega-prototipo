@@ -1,261 +1,405 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bodega Mauricio - Tienda Online</title>
+    <title>Bodega Mauricio - v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --danger: #ef4444;
-            --bg: #f9fafb;
-            --text: #1f2937;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #111827;
+            padding-bottom: 110px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 90px; }
-        header { background: white; padding: 15px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 1.25rem; color: var(--primary-dark); }
-        .search-container { padding: 15px 20px; background: white; border-bottom: 1px solid #e5e7eb; }
-        input[type="text"] { width: 100%; padding: 10px 15px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; outline: none; }
-        input[type="text"]:focus { border-color: var(--primary); }
-        .categories { display: flex; gap: 8px; overflow-x: auto; padding: 10px 20px; background: white; white-space: nowrap; scrollbar-width: none; }
-        .categories::-webkit-scrollbar { display: none; }
-        .cat-btn { padding: 6px 14px; background: #f3f4f6; border: none; border-radius: 20px; font-size: 0.875rem; cursor: pointer; color: #4b5563; }
-        .cat-btn.active { background: var(--primary); color: white; }
-        .container { padding: 15px 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        @media(min-width: 768px) { .container { grid-template-columns: repeat(4, 1fr); } }
-        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; position: relative; }
-        .card img { width: 100%; height: 130px; object-fit: cover; background: #e5e7eb; }
-        .card-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
-        .product-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
-        .product-cat { font-size: 0.75rem; color: #6b7280; margin-bottom: 8px; }
-        .product-price { font-size: 1rem; font-weight: bold; color: var(--primary-dark); margin-bottom: 8px; }
-        .badge-agotado { position: absolute; top: 10px; right: 10px; background: var(--danger); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-        .btn { width: 100%; padding: 8px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
-        .btn-add { background: var(--primary); color: white; }
-        .btn-add:active { background: var(--primary-dark); }
-        .btn-disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
-        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 20px; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .cart-info { font-size: 0.9rem; font-weight: 600; }
-        .btn-whatsapp { background: #25d366; color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
-        .history-section { padding: 20px; background: white; margin-top: 20px; border-top: 1px solid #e5e7eb; }
-        .history-item { font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
+        /* Ocultar barra de scroll en categorías */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Animación para el modal */
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-    <header>
-        <h1>🛒 Bodega Mauricio</h1>
-        <button onclick="toggleHistory()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;" title="Ver Historial">📜</button>
+    <!-- ENCABEZADO -->
+    <header class="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center font-extrabold text-lg shadow-md shadow-emerald-200">
+                    BM
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-gray-900 leading-tight">Bodega Mauricio</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-500 font-medium">Delivery & Pedidos</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">v2.0</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="toggleHistoryModal()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 active:scale-95 transition rounded-xl flex items-center justify-center text-lg" title="Ver Historial">
+                📜
+            </button>
+        </div>
     </header>
 
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Buscar productos..." oninput="filterProducts()">
+    <!-- BUSCADOR -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 py-3">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                    🔍
+                </span>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar productos por nombre..." 
+                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
+            </div>
+        </div>
     </div>
 
-    <div class="categories" id="categoryContainer">
-        <button class="cat-btn active" onclick="filterCategory('Todos')">Todos</button>
+    <!-- NAVEGACIÓN DE CATEGORÍAS -->
+    <div class="bg-white border-b border-gray-200 sticky top-[61px] z-30 shadow-xs">
+        <div class="max-w-4xl mx-auto px-4 py-2.5">
+            <div id="categoryContainer" class="flex gap-2 overflow-x-auto no-scrollbar py-0.5">
+                <button class="px-4 py-1.5 bg-emerald-600 text-white rounded-full text-xs font-semibold whitespace-nowrap shadow-sm">Todos</button>
+            </div>
+        </div>
     </div>
 
-    <div class="container" id="productGrid">
-        <p style="grid-column: span 2; text-align:center; color:#6b7280;">Cargando productos...</p>
+    <!-- CONTENEDOR DE PRODUCTOS -->
+    <main class="max-w-4xl mx-auto px-4 py-5">
+        <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+            <div class="col-span-full text-center py-12 text-gray-500">
+                <p class="font-medium text-sm">Cargando inventario...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- BARRA INFERIOR DEL CARRITO -->
+    <div id="cartBar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-40 hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div>
+                <span id="cartCountSummary" class="block text-xs text-gray-500 font-medium">0 productos</span>
+                <strong id="cartTotalPriceSummary" class="text-lg font-extrabold text-emerald-600">S/ 0.00</strong>
+            </div>
+            <button onclick="openCartModal()" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white px-5 py-3 rounded-xl font-bold text-sm shadow-md shadow-emerald-200 flex items-center gap-2 transition">
+                <span>🛒</span> Ver Carrito
+            </button>
+        </div>
     </div>
 
-    <div class="cart-bar" id="cartBar" style="display:none;">
-        <div class="cart-info" id="cartSummary">0 items | S/ 0.00</div>
-        <a href="#" id="whatsappBtn" class="btn-whatsapp" onclick="checkoutWhatsApp()">Pedir por WhatsApp</a>
+    <!-- MODAL "VER CARRITO" -->
+    <div id="cartModal" class="fixed inset-0 bg-black/60 z-50 hidden justify-center items-end sm:items-center p-0 sm:p-4 backdrop-blur-xs">
+        <div class="bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl max-h-[90vh] flex flex-direction flex-col overflow-hidden animate-slide-up shadow-2xl">
+            <!-- Header Modal -->
+            <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🛒</span>
+                    <h2 class="text-base font-bold text-gray-900">Tu Carrito de Compras</h2>
+                </div>
+                <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold flex items-center justify-center text-sm transition">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Items List -->
+            <div id="cartItemsList" class="p-5 overflow-y-auto flex-1 divide-y divide-gray-200">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <!-- Footer Modal con Total y Acciones -->
+            <div class="p-5 border-t border-gray-200 bg-gray-50 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-semibold text-gray-600">Total a Pagar:</span>
+                    <span id="cartModalTotal" class="text-2xl font-black text-emerald-600">S/ 0.00</span>
+                </div>
+                
+                <a id="whatsappBtn" href="#" onclick="checkoutWhatsApp(event)" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white py-3.5 px-4 rounded-xl font-bold text-sm text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 transition">
+                    <span class="text-lg">💬</span> Enviar Pedido por WhatsApp
+                </a>
+
+                <button onclick="closeCartModal()" class="w-full bg-gray-200 hover:bg-gray-300 active:scale-[0.98] text-gray-700 py-2.5 px-4 rounded-xl font-semibold text-xs text-center transition">
+                    ← Seguir Comprando
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div id="historyModal" class="history-section" style="display:none;">
-        <h3 style="font-size: 1rem; margin-bottom: 10px;">📦 Mis Compras Anteriores</h3>
-        <div id="historyList"><p style="color:#6b7280; font-size:0.85rem;">No hay compras registradas.</p></div>
+    <!-- MODAL DE HISTORIAL DE COMPRAS -->
+    <div id="historyModal" class="fixed inset-0 bg-black/60 z-50 hidden justify-center items-center p-4 backdrop-blur-xs">
+        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
+            <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">📜 Mis Compras Anteriores</h3>
+                <button onclick="toggleHistoryModal()" class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center text-sm">✕</button>
+            </div>
+            <div id="historyList" class="p-5 max-h-[60vh] overflow-y-auto divide-y divide-gray-100">
+                <p class="text-xs text-gray-500 text-center py-4">Cargando historial...</p>
+            </div>
+        </div>
     </div>
 
 <script>
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1oq0fFFptbyxSA1K9OD9G-3QrXvTI7rio8sZ1kje-MWA/export?format=csv';
-    const WHATSAPP_NUMBER = '51959434743';
+    // Configuración general
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/1oq0fFFptbyxSA1K9OD9G-3QrXvTI7rio8sZ1kje-MWA/export?format=csv';
+    const WHATSAPP_PHONE = '51959434743';
 
-    let products = [];
-    let cart = {};
-    let currentCategory = 'Todos';
+    // Productos de fallback por si falla la conexión a Google Sheets
+    const FALLBACK_PRODUCTS = [
+        { id: '1', name: 'Inca Kola 2L', category: 'Bebidas', price: 8.00, status: 'disponible', image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300&auto=format&fit=crop&q=80' },
+        { id: '2', name: 'Coca Cola 3L', category: 'Bebidas', price: 11.00, status: 'disponible', image: 'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=300&auto=format&fit=crop&q=80' },
+        { id: '3', name: 'Agua San Luis 2.5L', category: 'Bebidas', price: 3.50, status: 'disponible', image: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=300&auto=format&fit=crop&q=80' },
+        { id: '4', name: 'Fanta 3L', category: 'Bebidas', price: 10.00, status: 'disponible', image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=300&auto=format&fit=crop&q=80' },
+        { id: '5', name: 'Arroz Costeño 1kg', category: 'Abarrotes', price: 4.80, status: 'disponible', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300&auto=format&fit=crop&q=80' },
+        { id: '6', name: 'Aceite Primor 1L', category: 'Abarrotes', price: 9.50, status: 'agotado', image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&auto=format&fit=crop&q=80' }
+    ];
 
-    async function loadProducts() {
+    // Estado global de la aplicación
+    let allProducts = [];
+    let cart = {}; // { productId: quantity }
+    let selectedCategory = 'Todos';
+
+    // Cargar aplicación en cuanto el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        initApp();
+    });
+
+    async function initApp() {
         try {
-            const response = await fetch(SHEET_CSV_URL);
-            const data = await response.text();
-            parseCSV(data);
-        } catch (error) {
-            document.getElementById('productGrid').innerHTML = `<p style="grid-column:span 2; color:red; text-align:center;">Error al cargar el inventario. Asegúrate de que la hoja esté en acceso público Lector.</p>`;
+            const res = await fetch(CSV_URL);
+            if (!res.ok) throw new Error('Error de red');
+            const csvText = await res.text();
+            allProducts = parseCSVData(csvText);
+            
+            if (!allProducts || allProducts.length === 0) {
+                allProducts = FALLBACK_PRODUCTS;
+            }
+        } catch (err) {
+            console.warn('Google Sheets no disponible, usando datos locales de contingencia:', err);
+            allProducts = FALLBACK_PRODUCTS;
         }
+
+        renderCategoryPills();
+        renderProducts();
+        updateCartSummary();
     }
 
-    function parseCSV(text) {
-        const rows = text.split('\n').map(row => row.split(','));
-        products = [];
-        const categories = new Set(['Todos']);
+    // Parser CSV simple y resistente
+    function parseCSVData(csvText) {
+        const lines = csvText.split(/\r?\n/);
+        const parsed = [];
 
-        for (let i = 1; i < rows.length; i++) {
-            const row = rows[i];
-            if (row.length >= 6 && row[1]) {
-                const cleanPrice = parseFloat(row[3].replace('S/', '').replace('s/', '').trim());
-                products.push({
-                    id: row[0].trim(),
-                    name: row[1].trim(),
-                    category: row[2].trim(),
-                    price: isNaN(cleanPrice) ? 0.00 : cleanPrice,
-                    status: row[4].trim().toLowerCase(),
-                    image: row[5].trim().replace('\r', '')
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            // Divide respetando comillas básicas
+            const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+
+            if (cols.length >= 4 && cols[1]) {
+                const rawPrice = cols[3].replace(/[^\d.]/g, '');
+                const numPrice = parseFloat(rawPrice) || 0;
+
+                parsed.push({
+                    id: (cols[0] || 'p_' + i).toString(),
+                    name: cols[1],
+                    category: cols[2] || 'Varios',
+                    price: numPrice,
+                    status: (cols[4] || 'disponible').toLowerCase(),
+                    image: cols[5] || 'https://via.placeholder.com/300x200?text=Bodega+Mauricio'
                 });
-                categories.add(row[2].trim());
             }
         }
-        renderCategories([...categories]);
-        renderProducts(products);
+        return parsed;
     }
 
-    function renderCategories(cats) {
+    // Renderizar botones de categoría
+    function renderCategoryPills() {
         const container = document.getElementById('categoryContainer');
-        container.innerHTML = cats.map(cat => `<button class="cat-btn ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</button>`).join('');
-    }
+        const categories = ['Todos', ...new Set(allProducts.map(p => p.category))];
 
-    function renderProducts(list) {
-        const grid = document.getElementById('productGrid');
-        if (list.length === 0) {
-            grid.innerHTML = `<p style="grid-column:span 2; text-align:center; color:#6b7280;">No se encontraron productos.</p>`;
-            return;
-        }
-
-        grid.innerHTML = list.map(p => {
-            const isAgotado = p.status === 'agotado' || p.status === '0' || p.status === 'no disponible';
-            return `
-                <div class="card">
-                    ${isAgotado ? '<div class="badge-agotado">Agotado</div>' : ''}
-                    <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/150?text=Sin+Imagen'">
-                    <div class="card-body">
-                        <div>
-                            <div class="product-cat">${p.category}</div>
-                            <div class="product-name">${p.name}</div>
-                            <div class="product-price">S/ ${p.price.toFixed(2)}</div>
-                        </div>
-                        ${isAgotado 
-                            ? `<button class="btn btn-disabled" disabled>Agotado</button>` 
-                            : `<button class="btn btn-add" onclick="addToCart('${p.id}')">Agregar</button>`
-                        }
-                    </div>
-                </div>
-            `;
+        container.innerHTML = categories.map(cat => {
+            const isActive = cat === selectedCategory;
+            const bgClass = isActive ? 'bg-emerald-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200';
+            return '<button onclick="selectCategory(\'' + escapeJsString(cat) + '\')" class="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ' + bgClass + '">' + escapeHtml(cat) + '</button>';
         }).join('');
     }
 
-    function filterCategory(cat) {
-        currentCategory = cat;
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.textContent === cat);
+    function selectCategory(cat) {
+        selectedCategory = cat;
+        renderCategoryPills();
+        renderProducts();
+    }
+
+    function handleSearch() {
+        renderProducts();
+    }
+
+    // Renderizar grilla de productos
+    function renderProducts() {
+        const grid = document.getElementById('productGrid');
+        const searchTerm = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+
+        const filtered = allProducts.filter(p => {
+            const matchesCat = selectedCategory === 'Todos' || p.category === selectedCategory;
+            const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+            return matchesCat && matchesSearch;
         });
-        filterProducts();
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500"><p class="font-medium text-sm">No se encontraron productos.</p></div>';
+            return;
+        }
+
+        grid.innerHTML = filtered.map(product => {
+            const qty = cart[product.id] || 0;
+            const isAgotado = product.status === 'agotado' || product.status === '0' || product.status === 'no disponible';
+
+            let actionArea = '';
+            if (isAgotado) {
+                actionArea = '<button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-semibold text-xs rounded-xl cursor-not-allowed">Agotado</button>';
+            } else if (qty > 0) {
+                actionArea = 
+                    '<div class="flex items-center justify-between bg-emerald-50 border border-emerald-500 rounded-xl p-1">' +
+                        '<button onclick="changeQty(\'' + product.id + '\', -1)" class="w-7 h-7 bg-emerald-600 text-white rounded-lg font-bold flex items-center justify-center text-sm hover:bg-emerald-700 active:scale-95 transition">-</button>' +
+                        '<span class="text-xs font-extrabold text-emerald-800">' + qty + ' en carrito</span>' +
+                        '<button onclick="changeQty(\'' + product.id + '\', 1)" class="w-7 h-7 bg-emerald-600 text-white rounded-lg font-bold flex items-center justify-center text-sm hover:bg-emerald-700 active:scale-95 transition">+</button>' +
+                    '</div>';
+            } else {
+                actionArea = 
+                    '<button onclick="changeQty(\'' + product.id + '\', 1)" class="w-full py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs rounded-xl border border-emerald-200 active:scale-95 transition flex items-center justify-center gap-1">' +
+                        '<span>+</span> Agregar' +
+                    '</button>';
+            }
+
+            return '' +
+            '<div class="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden flex flex-col justify-between relative group">' +
+                '<div>' +
+                    '<div class="relative h-28 bg-gray-100 overflow-hidden">' +
+                        '<img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.name) + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src=\'https://via.placeholder.com/200x150?text=Producto\'">' +
+                        (isAgotado ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase">Agotado</span>' : '') +
+                    '</div>' +
+                    '<div class="p-3">' +
+                        '<span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">' + escapeHtml(product.category) + '</span>' +
+                        '<h3 class="text-xs font-bold text-gray-800 line-clamp-2 mb-1 leading-snug">' + escapeHtml(product.name) + '</h3>' +
+                        '<span class="text-sm font-black text-emerald-600 block">S/ ' + product.price.toFixed(2) + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="p-3 pt-0">' +
+                    actionArea +
+                '</div>' +
+            '</div>';
+        }).join('');
     }
 
-    function filterProducts() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = products.filter(p => {
-            const matchesCat = currentCategory === 'Todos' || p.category === currentCategory;
-            const matchesQuery = p.name.toLowerCase().includes(query);
-            return matchesCat && matchesQuery;
-        });
-        renderProducts(filtered);
+    // Manejo de cantidades en el carrito
+    function changeQty(productId, delta) {
+        const current = cart[productId] || 0;
+        const next = current + delta;
+
+        if (next <= 0) {
+            delete cart[productId];
+        } else {
+            cart[productId] = next;
+        }
+
+        updateCartSummary();
+        renderProducts();
+        
+        // Si el modal está abierto, refrescar su contenido
+        if (!document.getElementById('cartModal').classList.contains('hidden')) {
+            renderCartModalItems();
+        }
     }
 
-    function addToCart(id) {
-        const product = products.find(p => p.id === id);
-        if (!product) return;
-        cart[id] = (cart[id] || 0) + 1;
-        updateCartUI();
+    function removeItemCompletely(productId) {
+        delete cart[productId];
+        updateCartSummary();
+        renderProducts();
+        renderCartModalItems();
+
+        if (Object.keys(cart).length === 0) {
+            closeCartModal();
+        }
     }
 
-    function updateCartUI() {
-        let totalCount = 0;
+    // Actualizar barra flotante inferior
+    function updateCartSummary() {
+        let totalQty = 0;
         let totalPrice = 0;
 
         for (const id in cart) {
             const qty = cart[id];
-            const product = products.find(p => p.id === id);
-            if (product) {
-                totalCount += qty;
-                totalPrice += product.price * qty;
+            const p = allProducts.find(item => item.id === id);
+            if (p) {
+                totalQty += qty;
+                totalPrice += p.price * qty;
             }
         }
 
         const cartBar = document.getElementById('cartBar');
-        if (totalCount > 0) {
-            cartBar.style.display = 'flex';
-            document.getElementById('cartSummary').innerText = `${totalCount} items | S/ ${totalPrice.toFixed(2)}`;
+        if (totalQty > 0) {
+            cartBar.classList.remove('hidden');
+            document.getElementById('cartCountSummary').innerText = totalQty + ' producto' + (totalQty > 1 ? 's' : '');
+            document.getElementById('cartTotalPriceSummary').innerText = 'S/ ' + totalPrice.toFixed(2);
         } else {
-            cartBar.style.display = 'none';
+            cartBar.classList.add('hidden');
         }
     }
 
-    function checkoutWhatsApp() {
-        let message = "¡Hola! Quisiera realizar el siguiente pedido en *Bodega Mauricio*:\n\n";
+    // Abrir modal del carrito
+    function openCartModal() {
+        renderCartModalItems();
+        document.getElementById('cartModal').classList.remove('hidden');
+        document.getElementById('cartModal').classList.add('flex');
+    }
+
+    // Cerrar modal del carrito
+    function closeCartModal() {
+        document.getElementById('cartModal').classList.add('hidden');
+        document.getElementById('cartModal').classList.remove('flex');
+    }
+
+    // Renderizar lista detallada en el modal (con líneas divisorias claras)
+    function renderCartModalItems() {
+        const listContainer = document.getElementById('cartItemsList');
         let totalPrice = 0;
-        let orderItems = [];
+        const items = [];
 
         for (const id in cart) {
             const qty = cart[id];
-            const product = products.find(p => p.id === id);
-            if (product) {
-                const subtotal = product.price * qty;
+            const p = allProducts.find(item => item.id === id);
+            if (p) {
+                const subtotal = p.price * qty;
                 totalPrice += subtotal;
-                message += `• ${qty}x ${product.name} (S/ ${subtotal.toFixed(2)})\n`;
-                orderItems.push({name: product.name, qty, subtotal});
+                items.push({ product: p, qty: qty, subtotal: subtotal });
             }
         }
 
-        message += `\n💰 *TOTAL A PAGAR: S/ ${totalPrice.toFixed(2)}*`;
-        
-        saveOrderHistory(orderItems, totalPrice);
-
-        const encodedMessage = encodeURIComponent(message);
-        document.getElementById('whatsappBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-    }
-
-    function saveOrderHistory(items, total) {
-        let history = JSON.parse(localStorage.getItem('order_history') || '[]');
-        const now = new Date();
-        const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        history.unshift({ date: dateStr, items, total });
-        if (history.length > 5) history.pop();
-        localStorage.setItem('order_history', JSON.stringify(history));
-        loadHistoryUI();
-    }
-
-    function loadHistoryUI() {
-        let history = JSON.parse(localStorage.getItem('order_history') || '[]');
-        const list = document.getElementById('historyList');
-        if (history.length === 0) {
-            list.innerHTML = `<p style="color:#6b7280; font-size:0.85rem;">No hay compras registradas.</p>`;
+        if (items.length === 0) {
+            listContainer.innerHTML = '<p class="text-center text-gray-400 py-8 text-xs font-medium">El carrito está vacío.</p>';
+            document.getElementById('cartModalTotal').innerText = 'S/ 0.00';
             return;
         }
 
-        list.innerHTML = history.map(h => `
-            <div class="history-item">
-                <div>
-                    <strong>${h.date}</strong><br>
-                    <span style="color:#4b5563;">${h.items.map(i => `${i.qty}x${i.name}`).join(', ')}</span>
-                </div>
-                <div style="font-weight:bold; color:var(--primary-dark);">S/ ${h.total.toFixed(2)}</div>
-            </div>
-        `).join('');
-    }
-
-    function toggleHistory() {
-        const modal = document.getElementById('historyModal');
-        modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
-        loadHistoryUI();
-    }
-
-    loadProducts();
-</script>
-</body>
-</html>
+        listContainer.innerHTML = items.map(item => {
+            const p = item.product;
+            return '' +
+            '<div class="py-4 first:pt-0 last:pb-0 flex items-center justify-between gap-3">' +
+                '<div class="flex-1 min-w-0">' +
+                    '<h4 class="text-sm font-bold text-gray-900 truncate">' + escapeHtml(p.name) + '</h4>' +
+                    '<p class="text-xs text-gray-500 font-medium">S/ ' + p.price.toFixed(2) + ' c/u</p>' +
+                '</div>' +
+                '<div class="flex items-center gap-2">' +
+                    '<div class="flex items-center border border-gray-200 rounded-lg p-0.5 bg-gray-50">' +
+                        '<button onclick="changeQty(\'' + p.id + '\', -1)" class="w-6 h-6 bg-white border border-gray-200 rounded text-gray-700 font-bold text-xs flex i
