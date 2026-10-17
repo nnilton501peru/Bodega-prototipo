@@ -7,17 +7,17 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#1b1f24;font-size:18px;padding-bottom:96px}
-header{background:#1b1f24;color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header{background:#14532d;color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
 header .nombre{font-size:20px;font-weight:700;line-height:1.2}
 header .botones{display:flex;gap:6px;flex-shrink:0}
-header button{height:44px;border:none;border-radius:10px;background:#2e353f;color:#fff;font-size:15px;cursor:pointer;padding:0 10px}
+header button{height:44px;border:none;border-radius:10px;background:#1f6b3d;color:#fff;font-size:15px;cursor:pointer;padding:0 10px}
 header button.icono{width:44px;font-size:20px;padding:0}
 .buscar{padding:12px 12px 8px}
 .buscar input{width:100%;height:52px;font-size:18px;padding:0 14px;border:2px solid #cfd6de;border-radius:12px;background:#fff;color:#1b1f24}
 .cats{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
 .cats button{flex:0 0 auto;min-height:48px;padding:10px 16px;font-size:17px;border:2px solid #cfd6de;border-radius:12px;background:#fff;color:#1b1f24;cursor:pointer}
-.cats button.activa{background:#1b1f24;border-color:#1b1f24;color:#fff}
+.cats button.activa{background:#14532d;border-color:#14532d;color:#fff}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 12px}
 .card{background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:2px solid transparent}
 .card.enCarrito{border-color:#1f9d55}
@@ -27,13 +27,13 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .nombreProd{font-size:17px;line-height:1.25;min-height:42px;cursor:pointer}
 .precio{font-size:22px;font-weight:700;margin-top:4px}
 .acciones{margin-top:auto;padding-top:8px}
-.btn-add{width:100%;height:50px;border:none;border-radius:12px;background:#1f6fb8;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+.btn-add{width:100%;height:50px;border:none;border-radius:12px;background:#15803d;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
 .ctrl{display:flex;align-items:center;justify-content:space-between;background:#1f9d55;color:#fff;border-radius:12px;height:50px}
 .ctrl button{background:none;border:none;color:#fff;font-size:26px;width:50px;height:50px;cursor:pointer}
 .ctrl span{font-size:18px;font-weight:700}
 .agotado{background:#fde2e2;color:#9b1c1c;text-align:center;padding:14px 8px;border-radius:12px;font-weight:700;font-size:17px}
 .aviso{padding:20px;text-align:center;font-size:17px;grid-column:1/-1;color:#333}
-.barra{position:fixed;bottom:0;left:0;right:0;background:#1b1f24;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+.barra{position:fixed;bottom:0;left:0;right:0;background:#1f2937;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10}
 .barra .total{font-size:24px;font-weight:700}
 .barra button{height:52px;padding:0 18px;border:none;border-radius:12px;background:#f97316;color:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
 .panel{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:20}
@@ -131,7 +131,18 @@ const PEDIDOS_KEY = "pedidos_bodega_maya_kia";
 let productos = [];
 let categoria = "Todas";
 let detalleId = null;
-const carrito = {};
+const CARRITO_KEY = "carrito_bodega_maya_kia";
+const carrito = cargarCarrito();
+
+function cargarCarrito(){
+  try{ return JSON.parse(localStorage.getItem(CARRITO_KEY) || "{}"); }
+  catch(e){ return {}; }
+}
+
+function guardarCarrito(){
+  try{ localStorage.setItem(CARRITO_KEY, JSON.stringify(carrito)); }
+  catch(e){}
+}
 
 function parsearCSV(texto){
   const filas = []; let fila = []; let campo = ""; let comillas = false;
@@ -324,6 +335,7 @@ function pintarDetalle(){
 function cambiar(id, delta){
   const n = (carrito[id] || 0) + delta;
   if (n <= 0) delete carrito[id]; else carrito[id] = n;
+  guardarCarrito();
   pintarProductos();
   actualizarBarra();
   if (detalleId) pintarDetalle();
@@ -447,8 +459,14 @@ function pintarPedidos(){
 
 document.getElementById("enviar").onclick = () => {
   if (!Object.keys(carrito).length){ alert("Agrega productos primero."); return; }
+  const mensaje = mensajeWA();
   guardarPedido();
-  window.open("https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(mensajeWA()), "_blank");
+  window.open("https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(mensaje), "_blank");
+  for (const k in carrito) delete carrito[k];
+  guardarCarrito();
+  document.getElementById("panel").classList.remove("abierto");
+  pintarProductos();
+  actualizarBarra();
 };
 document.getElementById("abrir").onclick = () => {
   pintarCarrito();
