@@ -3,11 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bodega Mauricio</title>
+<title>Bodega Maya y Kia</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#1b1f24;font-size:18px;padding-bottom:96px}
-header{background:#1b1f24;color:#fff;padding:14px 16px;font-size:22px;font-weight:700;position:sticky;top:0;z-index:5}
+header{background:#1b1f24;color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header .nombre{font-size:20px;font-weight:700;line-height:1.2}
+header .botones{display:flex;gap:6px;flex-shrink:0}
+header button{height:44px;border:none;border-radius:10px;background:#2e353f;color:#fff;font-size:15px;cursor:pointer;padding:0 10px}
+header button.icono{width:44px;font-size:20px;padding:0}
 .buscar{padding:12px 12px 8px}
 .buscar input{width:100%;height:52px;font-size:18px;padding:0 14px;border:2px solid #cfd6de;border-radius:12px;background:#fff;color:#1b1f24}
 .cats{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px;scrollbar-width:none}
@@ -17,10 +21,10 @@ header{background:#1b1f24;color:#fff;padding:14px 16px;font-size:22px;font-weigh
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 12px}
 .card{background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:2px solid transparent}
 .card.enCarrito{border-color:#1f9d55}
-.foto{height:120px;background:#eaf1f7;display:flex;align-items:center;justify-content:center;font-size:52px}
+.foto{height:150px;background:#eaf1f7;display:flex;align-items:center;justify-content:center;font-size:52px;cursor:pointer}
 .foto img{width:100%;height:100%;object-fit:contain;background:#fff}
 .info{padding:10px;display:flex;flex-direction:column;flex:1}
-.nombre{font-size:17px;line-height:1.25;min-height:42px}
+.nombreProd{font-size:17px;line-height:1.25;min-height:42px;cursor:pointer}
 .precio{font-size:22px;font-weight:700;margin-top:4px}
 .acciones{margin-top:auto;padding-top:8px}
 .btn-add{width:100%;height:50px;border:none;border-radius:12px;background:#1f6fb8;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
@@ -31,10 +35,10 @@ header{background:#1b1f24;color:#fff;padding:14px 16px;font-size:22px;font-weigh
 .aviso{padding:20px;text-align:center;font-size:17px;grid-column:1/-1;color:#333}
 .barra{position:fixed;bottom:0;left:0;right:0;background:#1b1f24;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10}
 .barra .total{font-size:24px;font-weight:700}
-.barra button{height:52px;padding:0 18px;border:none;border-radius:12px;background:#f97316;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+.barra button{height:52px;padding:0 18px;border:none;border-radius:12px;background:#f97316;color:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
 .panel{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:20}
 .panel.abierto{display:flex}
-.hoja{background:#fff;width:100%;max-height:85vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:18px}
+.hoja{background:#fff;width:100%;max-height:90vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:18px}
 .hoja h2{font-size:22px;margin-bottom:6px}
 .linea{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #e3e7ec}
 .linea .datos{flex:1}
@@ -46,11 +50,34 @@ header{background:#1b1f24;color:#fff;padding:14px 16px;font-size:22px;font-weigh
 .totalPanel{font-size:22px;font-weight:700;margin-top:14px;text-align:right}
 .wa{width:100%;height:56px;border:none;border-radius:14px;background:#25d366;color:#fff;font-size:19px;font-weight:700;margin-top:14px;cursor:pointer}
 .cerrar{width:100%;height:48px;border:none;background:#eef2f6;border-radius:12px;font-size:17px;margin-top:10px;cursor:pointer;color:#1b1f24}
+.fotoGrande{width:100%;max-width:400px;aspect-ratio:1/1;margin:0 auto 14px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:120px;overflow:hidden;border:1px solid #e3e7ec}
+.fotoGrande img{width:100%;height:100%;object-fit:contain}
+.nombreGrande{font-size:24px;line-height:1.25}
+.precioGrande{font-size:30px;font-weight:700;margin:6px 0 16px}
+.det .btn-add{height:60px;font-size:21px}
+.det .ctrl{height:60px}
+.det .ctrl button{height:60px;font-size:30px}
+.det .ctrl span{font-size:22px}
+.pantalla{position:fixed;inset:0;background:#f4f6f8;z-index:25;display:none;overflow-y:auto;padding:14px}
+.pantalla.abierto{display:block}
+.pantalla .arriba{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.pantalla h2{font-size:24px}
+.pantalla .volverBtn{height:48px;padding:0 14px;border:none;border-radius:12px;background:#1b1f24;color:#fff;font-size:16px;cursor:pointer}
+.pedido{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px}
+.fecha{font-size:15px;color:#555}
+.items{font-size:17px;line-height:1.5;margin-top:8px;white-space:pre-line}
+.totalPedido{font-size:20px;font-weight:700;text-align:right;margin-top:8px}
 </style>
 </head>
 <body>
 
-<header id="titulo"></header>
+<header>
+  <div class="nombre" id="titulo"></div>
+  <div class="botones">
+    <button class="icono" id="pantalla" aria-label="Pantalla completa">⛶</button>
+    <button id="verPedidos">Mis pedidos</button>
+  </div>
+</header>
 
 <div class="buscar"><input id="buscar" type="search" placeholder="Buscar producto"></div>
 <div class="cats" id="cats"></div>
@@ -61,7 +88,7 @@ header{background:#1b1f24;color:#fff;padding:14px 16px;font-size:22px;font-weigh
     <div id="resumen">0 unidades</div>
     <div class="total" id="total">S/ 0.00</div>
   </div>
-  <button id="abrir">Ver carrito</button>
+  <button id="abrir">🛒 Ver carrito</button>
 </div>
 
 <div class="panel" id="panel">
@@ -74,19 +101,36 @@ header{background:#1b1f24;color:#fff;padding:14px 16px;font-size:22px;font-weigh
   </div>
 </div>
 
+<div class="panel" id="detalle">
+  <div class="hoja det">
+    <div id="detContenido"></div>
+    <button class="cerrar" id="cerrarDet">Volver a la tienda</button>
+  </div>
+</div>
+
+<div class="pantalla" id="pedidos">
+  <div class="arriba">
+    <button class="volverBtn" id="volverTienda">← Volver a la tienda</button>
+  </div>
+  <h2>Mis pedidos</h2>
+  <p style="font-size:15px;color:#555;margin:6px 0 14px">Guardados solo en este celular.</p>
+  <div id="listaPedidos"></div>
+</div>
+
 <script>
 // ====== CONFIGURACIÓN ======
 const CONFIG = {
-  nombre: "Bodega Mauricio",
+  nombre: "Bodega Maya y Kia",
   whatsapp: "51959434743",
-  // Pega aquí el link CSV de la hoja publicada (Archivo > Compartir > Publicar en la web > Hoja 1 > CSV)
   hojaCSV: "https://docs.google.com/spreadsheets/d/1oq0fFFptbyxSA1K9OD9G-3QrXvTI7rio8sZ1kje-MWA/gviz/tq?tqx=out:csv&gid=0"
 };
 
 const EMOJI = { "Bebidas":"🥤", "Snacks":"🍿", "Lácteos":"🥛", "Abarrotes":"🛒", "Golosinas":"🍬", "Limpieza":"🧼", "Cigarros":"🚬" };
+const PEDIDOS_KEY = "pedidos_bodega_maya_kia";
 
 let productos = [];
 let categoria = "Todas";
+let detalleId = null;
 const carrito = {};
 
 function parsearCSV(texto){
@@ -113,12 +157,27 @@ function parsearCSV(texto){
 
 function precioNumero(t){ return parseFloat(String(t).replace(/[^0-9.]/g, "")) || 0; }
 
+function nombreArchivo(n){
+  return n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function fotoEl(p, clase){
+  const box = document.createElement("div");
+  box.className = clase;
+  const base = nombreArchivo(p.nombre);
+  const img = document.createElement("img");
+  img.alt = p.nombre;
+  img.src = base + ".jpg";
+  img.onerror = () => {
+    if (!img.dataset.png){ img.dataset.png = "1"; img.src = base + ".png"; }
+    else box.textContent = EMOJI[p.categoria] || "📦";
+  };
+  box.appendChild(img);
+  return box;
+}
+
 async function cargarHoja(){
-  const aviso = document.getElementById("grid");
-  if (!CONFIG.hojaCSV || CONFIG.hojaCSV.startsWith("PEGAR")){
-    aviso.innerHTML = '<p class="aviso">Falta pegar el link CSV de la hoja en CONFIG.</p>';
-    return;
-  }
+  const grid = document.getElementById("grid");
   try{
     const r = await fetch(CONFIG.hojaCSV, { cache: "no-store" });
     const filas = parsearCSV(await r.text());
@@ -131,13 +190,12 @@ async function cargarHoja(){
         nombre: f[idx("producto")],
         categoria: f[idx("categoria")] || "Otros",
         precio: precioNumero(f[idx("precio")]),
-        agotado: (f[idx("estado")] || "").trim().toLowerCase() === "agotado",
-        foto: f[idx("imagen_url")] || ""
+        agotado: (f[idx("estado")] || "").trim().toLowerCase() === "agotado"
       }));
     pintarCategorias();
     pintarProductos();
   }catch(e){
-    aviso.innerHTML = '<p class="aviso">No se pudo cargar la lista de productos. Revisa la conexión.</p>';
+    grid.innerHTML = '<p class="aviso">No se pudo cargar la lista de productos. Revisa la conexión.</p>';
   }
 }
 
@@ -157,6 +215,23 @@ function pintarCategorias(){
   });
 }
 
+function controles(id, cant){
+  const c = document.createElement("div");
+  c.className = "ctrl";
+  const menos = document.createElement("button");
+  menos.textContent = "−";
+  menos.setAttribute("aria-label", "Quitar uno");
+  menos.onclick = () => cambiar(id, -1);
+  const n = document.createElement("span");
+  n.textContent = "✓ " + cant;
+  const mas = document.createElement("button");
+  mas.textContent = "+";
+  mas.setAttribute("aria-label", "Agregar uno");
+  mas.onclick = () => cambiar(id, 1);
+  c.append(menos, n, mas);
+  return c;
+}
+
 function pintarProductos(){
   const grid = document.getElementById("grid");
   const q = document.getElementById("buscar").value.trim().toLowerCase();
@@ -174,24 +249,15 @@ function pintarProductos(){
     const card = document.createElement("div");
     card.className = "card" + (cant > 0 ? " enCarrito" : "");
 
-    const foto = document.createElement("div");
-    foto.className = "foto";
-    const emoji = EMOJI[p.categoria] || "📦";
-    if (p.foto){
-      const img = document.createElement("img");
-      img.src = p.foto;
-      img.alt = p.nombre;
-      img.onerror = () => { img.remove(); foto.textContent = emoji; };
-      foto.appendChild(img);
-    } else {
-      foto.textContent = emoji;
-    }
+    const foto = fotoEl(p, "foto");
+    foto.onclick = () => abrirDetalle(p.id);
 
     const info = document.createElement("div");
     info.className = "info";
     const nombre = document.createElement("div");
-    nombre.className = "nombre";
+    nombre.className = "nombreProd";
     nombre.textContent = p.nombre;
+    nombre.onclick = () => abrirDetalle(p.id);
     const precio = document.createElement("div");
     precio.className = "precio";
     precio.textContent = "S/ " + p.precio.toFixed(2);
@@ -207,20 +273,7 @@ function pintarProductos(){
       b.onclick = () => cambiar(p.id, 1);
       acc.appendChild(b);
     } else {
-      const c = document.createElement("div");
-      c.className = "ctrl";
-      const menos = document.createElement("button");
-      menos.textContent = "−";
-      menos.setAttribute("aria-label", "Quitar uno");
-      menos.onclick = () => cambiar(p.id, -1);
-      const n = document.createElement("span");
-      n.textContent = "✓ " + cant;
-      const mas = document.createElement("button");
-      mas.textContent = "+";
-      mas.setAttribute("aria-label", "Agregar uno");
-      mas.onclick = () => cambiar(p.id, 1);
-      c.append(menos, n, mas);
-      acc.appendChild(c);
+      acc.appendChild(controles(p.id, cant));
     }
 
     info.append(nombre, precio, acc);
@@ -229,11 +282,51 @@ function pintarProductos(){
   });
 }
 
+function abrirDetalle(id){
+  detalleId = id;
+  pintarDetalle();
+  document.getElementById("detalle").classList.add("abierto");
+}
+
+function cerrarDetalle(){
+  detalleId = null;
+  document.getElementById("detalle").classList.remove("abierto");
+}
+
+function pintarDetalle(){
+  const p = productos.find(x => x.id === detalleId);
+  if (!p) return;
+  const cont = document.getElementById("detContenido");
+  cont.innerHTML = "";
+  const cant = carrito[p.id] || 0;
+  const nombre = document.createElement("div");
+  nombre.className = "nombreGrande";
+  nombre.textContent = p.nombre;
+  const precio = document.createElement("div");
+  precio.className = "precioGrande";
+  precio.textContent = "S/ " + p.precio.toFixed(2);
+  const acc = document.createElement("div");
+  if (p.agotado){
+    acc.innerHTML = '<div class="agotado">Agotado</div>';
+  } else if (cant === 0){
+    const b = document.createElement("button");
+    b.className = "btn-add";
+    b.textContent = "+ Agregar al carrito";
+    b.onclick = () => cambiar(p.id, 1);
+    acc.appendChild(b);
+  } else {
+    acc.appendChild(controles(p.id, cant));
+  }
+  cont.append(fotoEl(p, "fotoGrande"), nombre, precio, acc);
+  cont.parentElement.classList.add("det");
+}
+
 function cambiar(id, delta){
   const n = (carrito[id] || 0) + delta;
   if (n <= 0) delete carrito[id]; else carrito[id] = n;
   pintarProductos();
   actualizarBarra();
+  if (detalleId) pintarDetalle();
   if (document.getElementById("panel").classList.contains("abierto")) pintarCarrito();
 }
 
@@ -304,8 +397,57 @@ function mensajeWA(){
          "\n\nTOTAL: S/ " + tot.toFixed(2) + "\n\n¿Me confirman, por favor?";
 }
 
+function leerPedidos(){
+  try{ return JSON.parse(localStorage.getItem(PEDIDOS_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+
+function guardarPedido(){
+  const ahora = new Date();
+  const items = [];
+  for (const id in carrito){
+    const p = productos.find(x => x.id === id);
+    if (p) items.push({ nombre: p.nombre, cantidad: carrito[id], precio: p.precio });
+  }
+  const pedidos = leerPedidos();
+  pedidos.unshift({
+    fecha: ahora.toLocaleDateString("es-PE", { day: "numeric", month: "short", year: "numeric" }),
+    hora: ahora.toLocaleTimeString("es-PE", { hour: "numeric", minute: "2-digit" }),
+    items: items,
+    total: totales().tot
+  });
+  try{ localStorage.setItem(PEDIDOS_KEY, JSON.stringify(pedidos.slice(0, 50))); }
+  catch(e){}
+}
+
+function pintarPedidos(){
+  const cont = document.getElementById("listaPedidos");
+  cont.innerHTML = "";
+  const pedidos = leerPedidos();
+  if (!pedidos.length){
+    cont.innerHTML = '<p class="vacio">Todavía no tienes pedidos guardados en este celular.</p>';
+    return;
+  }
+  pedidos.forEach(pd => {
+    const card = document.createElement("div");
+    card.className = "pedido";
+    const f = document.createElement("div");
+    f.className = "fecha";
+    f.textContent = pd.fecha + " · " + pd.hora;
+    const det = document.createElement("div");
+    det.className = "items";
+    det.textContent = pd.items.map(i => i.cantidad + " x " + i.nombre + " · S/ " + (i.precio * i.cantidad).toFixed(2)).join("\n");
+    const t = document.createElement("div");
+    t.className = "totalPedido";
+    t.textContent = "Total: S/ " + pd.total.toFixed(2);
+    card.append(f, det, t);
+    cont.appendChild(card);
+  });
+}
+
 document.getElementById("enviar").onclick = () => {
   if (!Object.keys(carrito).length){ alert("Agrega productos primero."); return; }
+  guardarPedido();
   window.open("https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(mensajeWA()), "_blank");
 };
 document.getElementById("abrir").onclick = () => {
@@ -317,6 +459,23 @@ document.getElementById("cerrar").onclick = () => {
 };
 document.getElementById("panel").onclick = (e) => {
   if (e.target.id === "panel") document.getElementById("panel").classList.remove("abierto");
+};
+document.getElementById("cerrarDet").onclick = cerrarDetalle;
+document.getElementById("detalle").onclick = (e) => {
+  if (e.target.id === "detalle") cerrarDetalle();
+};
+document.getElementById("verPedidos").onclick = () => {
+  pintarPedidos();
+  document.getElementById("pedidos").classList.add("abierto");
+};
+document.getElementById("volverTienda").onclick = () => {
+  document.getElementById("pedidos").classList.remove("abierto");
+};
+document.getElementById("pantalla").onclick = () => {
+  try{
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }catch(e){}
 };
 document.getElementById("buscar").oninput = pintarProductos;
 document.getElementById("titulo").textContent = CONFIG.nombre;
