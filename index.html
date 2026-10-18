@@ -7,8 +7,8 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#1b1f24;font-size:18px;padding-bottom:96px}
-header{background:#14532d;color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
-header .nombre{font-size:20px;font-weight:700;line-height:1.2}
+header{background:#14532d;color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+header .nombre{font-size:20px;font-weight:700;line-height:1.2;text-align:center}
 header .botones{display:flex;gap:6px;flex-shrink:0}
 header button{height:44px;border:none;border-radius:10px;background:#1f6b3d;color:#fff;font-size:15px;cursor:pointer;padding:0 10px}
 header button.icono{width:44px;font-size:20px;padding:0}
@@ -82,16 +82,20 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .fila2 button{flex:1;height:50px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer}
 .btnRojo{background:#dc2626;color:#fff}
 .btnGris{background:#e5e7eb;color:#1f2937}
+.catItem{flex:0 0 auto;width:72px;text-align:center;cursor:pointer}
+.catCaja{width:72px;height:72px;border-radius:16px;background:#efece6;color:#111827;border:3px solid transparent;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.catCaja.activa{background:#14532d;border-color:#14532d;color:#ffffff}
+.catCaja img{width:100%;height:100%;object-fit:cover}
+.catNombre{font-size:13px;color:#111827;margin-top:6px}
+.catNombre.activa{font-weight:700;color:#14532d}
 </style>
 </head>
 <body>
 
 <header>
+  <button id="verPedidos">Mis pedidos</button>
   <div class="nombre" id="titulo"></div>
-  <div class="botones">
-    <button class="icono" id="pantalla" aria-label="Pantalla completa">⛶</button>
-    <button id="verPedidos">Mis pedidos</button>
-  </div>
+  <button class="icono" id="pantalla" aria-label="Pantalla completa">⛶</button>
 </header>
 
 <div class="buscar">
@@ -160,6 +164,16 @@ const CONFIG = {
 };
 
 const EMOJI = { "Bebidas":"🥤", "Snacks":"🍿", "Lácteos":"🥛", "Abarrotes":"🛒", "Golosinas":"🍬", "Limpieza":"🧼", "Cigarros":"🚬" };
+const SVG_INI = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const ICONOS = {
+  "Todas": SVG_INI + '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>',
+  "Bebidas": SVG_INI + '<path d="M7 8h10l-1.5 12h-7z"/><path d="M8 8l1-5h6l1 5"/><path d="M14 3l3-1"/></svg>',
+  "Licores": SVG_INI + '<path d="M10 2h4v4l2 3v12a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1V9l2-3z"/><path d="M10 12h4"/></svg>',
+  "Hielo": SVG_INI + '<rect x="5" y="5" width="14" height="14" rx="2" transform="rotate(10 12 12)"/><path d="M9 9l6 6"/></svg>',
+  "Piqueos": SVG_INI + '<path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
+  "Cigarros": SVG_INI + '<rect x="4" y="7" width="16" height="11" rx="1"/><path d="M4 11h16"/><path d="M8 7V4h8v3"/></svg>',
+  "Otros": SVG_INI + '<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>'
+};
 const PEDIDOS_KEY = "pedidos_bodega_maya_kia";
 
 let productos = [];
@@ -253,11 +267,21 @@ function pintarCategorias(){
   const cont = document.getElementById("cats");
   cont.innerHTML = "";
   categorias().forEach(c => {
-    const b = document.createElement("button");
-    b.textContent = c;
-    if (c === categoria) b.classList.add("activa");
-    b.onclick = () => { categoria = c; pintarCategorias(); pintarProductos(); };
-    cont.appendChild(b);
+    const item = document.createElement("div");
+    item.className = "catItem";
+    item.onclick = () => { categoria = c; pintarCategorias(); pintarProductos(); };
+    const caja = document.createElement("div");
+    caja.className = "catCaja" + (c === categoria ? " activa" : "");
+    const img = document.createElement("img");
+    img.alt = c;
+    img.src = nombreArchivo(c) + ".jpg";
+    img.onerror = () => { caja.innerHTML = ICONOS[c] || ICONOS["Otros"]; };
+    caja.appendChild(img);
+    const nom = document.createElement("div");
+    nom.className = "catNombre" + (c === categoria ? " activa" : "");
+    nom.textContent = c;
+    item.append(caja, nom);
+    cont.appendChild(item);
   });
 }
 
