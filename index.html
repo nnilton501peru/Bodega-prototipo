@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bodega Maya y Kia</title>
+<title>Delivery Maya y Kia</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#1b1f24;font-size:18px;padding-bottom:96px}
@@ -13,7 +13,12 @@ header .botones{display:flex;gap:6px;flex-shrink:0}
 header button{height:44px;border:none;border-radius:10px;background:#1f6b3d;color:#fff;font-size:15px;cursor:pointer;padding:0 10px}
 header button.icono{width:44px;font-size:20px;padding:0}
 .buscar{padding:12px 12px 8px}
-.buscar input{width:100%;height:52px;font-size:18px;padding:0 14px;border:2px solid #cfd6de;border-radius:12px;background:#fff;color:#1b1f24}
+.caja{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #cfd6de;border-radius:12px;padding:0 8px 0 12px;height:52px}
+.caja svg{flex-shrink:0;color:#14532d}
+.caja input{flex:1;min-width:0;height:100%;border:none;outline:none;background:transparent;font-size:18px;color:#1b1f24}
+.caja input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+.borrar{background:#15803d;color:#fff;border:none;border-radius:10px;height:38px;padding:0 14px;font-size:16px;font-weight:700;cursor:pointer}
+.borrar[hidden]{display:none}
 .cats{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
 .cats button{flex:0 0 auto;min-height:48px;padding:10px 16px;font-size:17px;border:2px solid #cfd6de;border-radius:12px;background:#fff;color:#1b1f24;cursor:pointer}
@@ -79,7 +84,13 @@ header button.icono{width:44px;font-size:20px;padding:0}
   </div>
 </header>
 
-<div class="buscar"><input id="buscar" type="search" placeholder="Buscar producto"></div>
+<div class="buscar">
+  <div class="caja">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="buscar" type="search" placeholder="Buscar producto">
+    <button class="borrar" id="borrarBuscar" hidden>Borrar</button>
+  </div>
+</div>
 <div class="cats" id="cats"></div>
 <main class="grid" id="grid"></main>
 
@@ -88,7 +99,7 @@ header button.icono{width:44px;font-size:20px;padding:0}
     <div id="resumen">0 unidades</div>
     <div class="total" id="total">S/ 0.00</div>
   </div>
-  <button id="abrir">🛒 Ver carrito</button>
+  <button id="abrir"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L22 7H6"/></svg> Ver carrito</button>
 </div>
 
 <div class="panel" id="panel">
@@ -120,7 +131,7 @@ header button.icono{width:44px;font-size:20px;padding:0}
 <script>
 // ====== CONFIGURACIÓN ======
 const CONFIG = {
-  nombre: "Bodega Maya y Kia",
+  nombre: "Delivery Maya y Kia",
   whatsapp: "51959434743",
   hojaCSV: "https://docs.google.com/spreadsheets/d/1oq0fFFptbyxSA1K9OD9G-3QrXvTI7rio8sZ1kje-MWA/gviz/tq?tqx=out:csv&gid=0"
 };
@@ -205,6 +216,7 @@ async function cargarHoja(){
       }));
     pintarCategorias();
     pintarProductos();
+    actualizarBarra();
   }catch(e){
     grid.innerHTML = '<p class="aviso">No se pudo cargar la lista de productos. Revisa la conexión.</p>';
   }
@@ -495,7 +507,17 @@ document.getElementById("pantalla").onclick = () => {
     else document.exitFullscreen();
   }catch(e){}
 };
-document.getElementById("buscar").oninput = pintarProductos;
+const buscarEl = document.getElementById("buscar");
+const borrarEl = document.getElementById("borrarBuscar");
+buscarEl.oninput = () => {
+  borrarEl.hidden = !buscarEl.value;
+  pintarProductos();
+};
+borrarEl.onclick = () => {
+  buscarEl.value = "";
+  borrarEl.hidden = true;
+  pintarProductos();
+};
 document.getElementById("titulo").textContent = CONFIG.nombre;
 
 actualizarBarra();
