@@ -224,14 +224,14 @@ function fotoEl(p, clase){
   const box = document.createElement("div");
   box.className = clase;
   const base = nombreArchivo(p.nombre);
-  const img = document.createElement("img");
-  img.alt = p.nombre;
-  img.src = base + ".jpg";
+  box.textContent = EMOJI[p.categoria] || "📦";
+  const img = new Image();
+  img.alt = "";
+  img.onload = () => { box.textContent = ""; box.appendChild(img); };
   img.onerror = () => {
     if (!img.dataset.png){ img.dataset.png = "1"; img.src = base + ".png"; }
-    else box.textContent = EMOJI[p.categoria] || "📦";
   };
-  box.appendChild(img);
+  img.src = base + ".jpg";
   return box;
 }
 
@@ -272,11 +272,14 @@ function pintarCategorias(){
     item.onclick = () => { categoria = c; pintarCategorias(); pintarProductos(); };
     const caja = document.createElement("div");
     caja.className = "catCaja" + (c === categoria ? " activa" : "");
-    const img = document.createElement("img");
-    img.alt = c;
+    caja.innerHTML = ICONOS[c] || ICONOS["Otros"];
+    const img = new Image();
+    img.alt = "";
+    img.onload = () => { caja.innerHTML = ""; caja.appendChild(img); };
+    img.onerror = () => {
+      if (!img.dataset.png){ img.dataset.png = "1"; img.src = nombreArchivo(c) + ".png"; }
+    };
     img.src = nombreArchivo(c) + ".jpg";
-    img.onerror = () => { caja.innerHTML = ICONOS[c] || ICONOS["Otros"]; };
-    caja.appendChild(img);
     const nom = document.createElement("div");
     nom.className = "catNombre" + (c === categoria ? " activa" : "");
     nom.textContent = c;
