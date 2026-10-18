@@ -25,7 +25,7 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .cats button.activa{background:#14532d;border-color:#14532d;color:#fff}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 12px}
 .card{background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:2px solid transparent}
-.card.enCarrito{border-color:#1f9d55}
+.card.enCarrito{border-color:#2563eb}
 .foto{height:150px;background:#eaf1f7;display:flex;align-items:center;justify-content:center;font-size:52px;cursor:pointer}
 .foto img{width:100%;height:100%;object-fit:contain;background:#fff}
 .info{padding:10px;display:flex;flex-direction:column;flex:1}
@@ -33,8 +33,8 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .precio{font-size:22px;font-weight:700;margin-top:4px}
 .acciones{margin-top:auto;padding-top:8px}
 .btn-add{width:100%;height:50px;border:none;border-radius:12px;background:#15803d;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
-.ctrl{display:flex;align-items:center;justify-content:space-between;background:#1f9d55;color:#fff;border-radius:12px;height:50px}
-.ctrl button{background:none;border:none;color:#fff;font-size:26px;width:50px;height:50px;cursor:pointer}
+.ctrl{display:flex;align-items:center;justify-content:space-between;background:#dbeafe;color:#1e3a8a;border:2px solid #2563eb;border-radius:12px;height:50px}
+.ctrl button{background:none;border:none;color:#1e3a8a;font-size:26px;width:50px;height:50px;cursor:pointer}
 .ctrl span{font-size:18px;font-weight:700}
 .agotado{background:#fde2e2;color:#9b1c1c;text-align:center;padding:14px 8px;border-radius:12px;font-weight:700;font-size:17px}
 .aviso{padding:20px;text-align:center;font-size:17px;grid-column:1/-1;color:#333}
@@ -66,12 +66,22 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .pantalla{position:fixed;inset:0;background:#f4f6f8;z-index:25;display:none;overflow-y:auto;padding:14px}
 .pantalla.abierto{display:block}
 .pantalla .arriba{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
-.pantalla h2{font-size:24px}
-.pantalla .volverBtn{height:48px;padding:0 14px;border:none;border-radius:12px;background:#1b1f24;color:#fff;font-size:16px;cursor:pointer}
-.pedido{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px}
+.pantalla h2{font-size:24px;color:#14532d}
+.pantalla .volverBtn{height:48px;padding:0 14px;border:none;border-radius:12px;background:#15803d;color:#fff;font-size:16px;cursor:pointer}
+.pedido{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;border-left:5px solid #15803d}
 .fecha{font-size:15px;color:#555}
 .items{font-size:17px;line-height:1.5;margin-top:8px;white-space:pre-line}
-.totalPedido{font-size:20px;font-weight:700;text-align:right;margin-top:8px}
+.totalPedido{font-size:20px;font-weight:700;text-align:right;margin-top:8px;color:#14532d}
+.pItem{padding:6px 0;border-bottom:1px solid #f0f2f4}
+.pNombre{font-size:17px;font-weight:700;color:#1f2937}
+.pDetalle{font-size:14px;color:#4b5563}
+.subLinea{width:72px;text-align:right;font-size:16px;font-weight:700;color:#1f2937}
+.borrarHist{width:100%;height:50px;border:2px solid #dc2626;background:#fff;color:#b91c1c;border-radius:12px;font-size:16px;font-weight:700;margin-top:10px;cursor:pointer}
+.avisoVerde{background:#dcfce7;color:#14532d;padding:10px 14px;border-radius:10px;margin-top:10px;font-size:15px;font-weight:700;text-align:center}
+.fila2{display:flex;gap:10px;margin-top:16px}
+.fila2 button{flex:1;height:50px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer}
+.btnRojo{background:#dc2626;color:#fff}
+.btnGris{background:#e5e7eb;color:#1f2937}
 </style>
 </head>
 <body>
@@ -126,6 +136,19 @@ header button.icono{width:44px;font-size:20px;padding:0}
   <h2>Mis pedidos</h2>
   <p style="font-size:15px;color:#555;margin:6px 0 14px">Guardados solo en este celular.</p>
   <div id="listaPedidos"></div>
+  <button class="borrarHist" id="borrarHist" hidden>Borrar historial</button>
+  <div class="avisoVerde" id="avisoHist" hidden>Historial borrado</div>
+</div>
+
+<div class="panel" id="confirmar" style="z-index:30">
+  <div class="hoja">
+    <h2>¿Borrar todo tu historial?</h2>
+    <p style="font-size:17px;color:#4b5563">Esto no se puede deshacer.</p>
+    <div class="fila2">
+      <button class="btnRojo" id="siBorrar">Sí, borrar</button>
+      <button class="btnGris" id="noBorrar">No, cancelar</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -387,7 +410,7 @@ function pintarCarrito(){
     const b = document.createElement("b");
     b.textContent = p.nombre;
     const s = document.createElement("small");
-    s.textContent = "S/ " + p.precio.toFixed(2) + " c/u · Subtotal S/ " + (p.precio * q).toFixed(2);
+    s.textContent = "S/ " + p.precio.toFixed(2) + " c/u";
     datos.append(b, s);
     const menos = document.createElement("button");
     menos.className = "mini";
@@ -402,7 +425,10 @@ function pintarCarrito(){
     mas.textContent = "+";
     mas.setAttribute("aria-label", "Agregar uno");
     mas.onclick = () => cambiar(id, 1);
-    div.append(datos, menos, cantEl, mas);
+    const sub = document.createElement("div");
+    sub.className = "subLinea";
+    sub.textContent = "S/ " + (p.precio * q).toFixed(2);
+    div.append(datos, menos, cantEl, mas, sub);
     cont.appendChild(div);
   });
   document.getElementById("totalPanel").textContent = "Total: S/ " + totales().tot.toFixed(2);
@@ -460,7 +486,18 @@ function pintarPedidos(){
     f.textContent = pd.fecha + " · " + pd.hora;
     const det = document.createElement("div");
     det.className = "items";
-    det.textContent = pd.items.map(i => i.cantidad + " x " + i.nombre + " · S/ " + (i.precio * i.cantidad).toFixed(2)).join("\n");
+    pd.items.forEach(i => {
+      const fila = document.createElement("div");
+      fila.className = "pItem";
+      const n = document.createElement("div");
+      n.className = "pNombre";
+      n.textContent = i.cantidad + " x " + i.nombre;
+      const s = document.createElement("div");
+      s.className = "pDetalle";
+      s.textContent = "S/ " + i.precio.toFixed(2) + " c/u · Subtotal S/ " + (i.precio * i.cantidad).toFixed(2);
+      fila.append(n, s);
+      det.appendChild(fila);
+    });
     const t = document.createElement("div");
     t.className = "totalPedido";
     t.textContent = "Total: S/ " + pd.total.toFixed(2);
@@ -496,6 +533,7 @@ document.getElementById("detalle").onclick = (e) => {
 };
 document.getElementById("verPedidos").onclick = () => {
   pintarPedidos();
+  actualizarBotonBorrar();
   document.getElementById("pedidos").classList.add("abierto");
 };
 document.getElementById("volverTienda").onclick = () => {
@@ -506,6 +544,24 @@ document.getElementById("pantalla").onclick = () => {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen();
     else document.exitFullscreen();
   }catch(e){}
+};
+function actualizarBotonBorrar(){
+  document.getElementById("borrarHist").hidden = !leerPedidos().length;
+}
+const confirmarEl = document.getElementById("confirmar");
+document.getElementById("borrarHist").onclick = () => confirmarEl.classList.add("abierto");
+document.getElementById("noBorrar").onclick = () => confirmarEl.classList.remove("abierto");
+confirmarEl.onclick = (e) => {
+  if (e.target.id === "confirmar") confirmarEl.classList.remove("abierto");
+};
+document.getElementById("siBorrar").onclick = () => {
+  try{ localStorage.removeItem(PEDIDOS_KEY); }catch(e){}
+  confirmarEl.classList.remove("abierto");
+  pintarPedidos();
+  actualizarBotonBorrar();
+  const aviso = document.getElementById("avisoHist");
+  aviso.hidden = false;
+  setTimeout(() => { aviso.hidden = true; }, 2500);
 };
 const buscarEl = document.getElementById("buscar");
 const borrarEl = document.getElementById("borrarBuscar");
