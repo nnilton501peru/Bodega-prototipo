@@ -90,6 +90,7 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .catNombre.activa{font-weight:700;color:#14532d}
 .btnVerde{background:#15803d;color:#fff}
 input{-webkit-user-select:text;user-select:text}
+.pie{text-align:center;font-size:11px;color:#9ca3af;padding:14px 12px 8px}
 </style>
 </head>
 <body>
@@ -109,6 +110,7 @@ input{-webkit-user-select:text;user-select:text}
 </div>
 <div class="cats" id="cats"></div>
 <main class="grid" id="grid"></main>
+<footer class="pie">v1.0 · Mauricio</footer>
 
 <div class="barra">
   <div>
@@ -318,8 +320,8 @@ function controles(id, cant){
   return c;
 }
 
-function pintarProductos(){
-  const grid = document.getElementById("grid");
+function pintarProductos(destino){
+  const grid = destino instanceof Element ? destino : document.getElementById("grid");
   const q = document.getElementById("buscar").value.trim().toLowerCase();
   const lista = productos.filter(p =>
     (categoria === "Todas" || p.categoria === categoria) &&
@@ -334,6 +336,7 @@ function pintarProductos(){
     const cant = carrito[p.id] || 0;
     const card = document.createElement("div");
     card.className = "card" + (cant > 0 ? " enCarrito" : "");
+    card.dataset.id = p.id;
 
     const foto = fotoEl(p, "foto");
     foto.onclick = () => abrirDetalle(p.id);
@@ -366,6 +369,16 @@ function pintarProductos(){
     card.append(foto, info);
     grid.appendChild(card);
   });
+}
+
+function refrescarTarjeta(id){
+  const grid = document.getElementById("grid");
+  const viejo = grid.querySelector('[data-id="' + id + '"]');
+  if (!viejo){ pintarProductos(); return; }
+  const temp = document.createElement("div");
+  pintarProductos(temp);
+  const nueva = temp.querySelector('[data-id="' + id + '"]');
+  if (nueva) viejo.replaceWith(nueva); else pintarProductos();
 }
 
 function abrirDetalle(id){
@@ -411,7 +424,7 @@ function cambiar(id, delta){
   const n = (carrito[id] || 0) + delta;
   if (n <= 0) delete carrito[id]; else carrito[id] = n;
   guardarCarrito();
-  pintarProductos();
+  refrescarTarjeta(id);
   actualizarBarra();
   if (detalleId) pintarDetalle();
   if (document.getElementById("panel").classList.contains("abierto")) pintarCarrito();
@@ -421,7 +434,7 @@ function totales(){
   let uds = 0, tot = 0;
   for (const id in carrito){
     const p = productos.find(x => x.id === id);
-    if (p){ uds += carrito[id]; tot += carrito[id] * p.precio; }
+    if (p && !p.agotado){ uds += carrito[id]; tot += carrito[id] * p.precio; }
   }
   return { uds, tot };
 }
@@ -450,7 +463,7 @@ function pintarCarrito(){
     const b = document.createElement("b");
     b.textContent = p.nombre;
     const s = document.createElement("small");
-    s.textContent = "S/ " + p.precio.toFixed(2) + " c/u";
+    s.textContent = p.agotado ? "Agotado · no se cobra" : "S/ " + p.precio.toFixed(2) + " c/u";
     datos.append(b, s);
     const menos = document.createElement("button");
     menos.className = "mini";
@@ -467,7 +480,7 @@ function pintarCarrito(){
     mas.onclick = () => cambiar(id, 1);
     const sub = document.createElement("div");
     sub.className = "subLinea";
-    sub.textContent = "S/ " + (p.precio * q).toFixed(2);
+    sub.textContent = p.agotado ? "S/ 0.00" : "S/ " + (p.precio * q).toFixed(2);
     div.append(datos, menos, cantEl, mas, sub);
     cont.appendChild(div);
   });
@@ -478,7 +491,7 @@ function mensajeWA(){
   const lineas = [];
   for (const id in carrito){
     const p = productos.find(x => x.id === id);
-    if (!p) continue;
+    if (!p || p.agotado) continue;
     const q = carrito[id];
     lineas.push("- " + q + " x " + p.nombre + "\n   S/ " + p.precio.toFixed(2) + " c/u = S/ " + (p.precio * q).toFixed(2));
   }
@@ -497,7 +510,7 @@ function guardarPedido(){
   const items = [];
   for (const id in carrito){
     const p = productos.find(x => x.id === id);
-    if (p) items.push({ nombre: p.nombre, cantidad: carrito[id], precio: p.precio });
+    if (p && !p.agotado) items.push({ nombre: p.nombre, cantidad: carrito[id], precio: p.precio });
   }
   const pedidos = leerPedidos();
   pedidos.unshift({
