@@ -91,6 +91,7 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .btnVerde{background:#15803d;color:#fff}
 input{-webkit-user-select:text;user-select:text}
 .pie{text-align:center;font-size:11px;color:#9ca3af;padding:14px 12px 8px}
+.avisoAtras{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,340px);background:rgba(31,41,55,.95);color:#ffffff;padding:18px 20px;border-radius:16px;font-size:20px;font-weight:700;text-align:center;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -159,16 +160,7 @@ input{-webkit-user-select:text;user-select:text}
   </div>
 </div>
 
-<div class="panel" id="confirmarSalir" style="z-index:40">
-  <div class="hoja">
-    <h2>¿Seguro que quieres salir?</h2>
-    <p style="font-size:17px;color:#4b5563">Tu carrito queda guardado en este celular.</p>
-    <div class="fila2">
-      <button class="btnGris" id="quedarme">Quedarme</button>
-      <button class="btnVerde" id="siSalir">Sí, salir</button>
-    </div>
-  </div>
-</div>
+<div id="avisoAtras" class="avisoAtras" style="display:none">Toca atrás otra vez para salir</div>
 
 <script>
 // ====== CONFIGURACIÓN ======
@@ -616,32 +608,32 @@ document.getElementById("siBorrar").onclick = () => {
   aviso.hidden = false;
   setTimeout(() => { aviso.hidden = true; }, 2500);
 };
-let salirConfirmado = false;
+let ultimoAtras = 0;
+let avisoTimer = null;
 history.pushState({ tienda: true }, "");
 window.addEventListener("popstate", () => {
-  if (salirConfirmado) return;
+  const pedidosAbiertos = document.getElementById("pedidos").classList.contains("abierto");
+  const carritoAbierto = document.getElementById("panel").classList.contains("abierto");
+  const detalleAbierto = document.getElementById("detalle").classList.contains("abierto");
+  if (pedidosAbiertos || carritoAbierto || detalleAbierto){
+    history.pushState({ tienda: true }, "");
+    if (pedidosAbiertos) document.getElementById("pedidos").classList.remove("abierto");
+    else if (carritoAbierto) document.getElementById("panel").classList.remove("abierto");
+    else cerrarDetalle();
+    return;
+  }
+  const ahora = Date.now();
+  if (ahora - ultimoAtras < 2000){
+    history.back();
+    return;
+  }
+  ultimoAtras = ahora;
   history.pushState({ tienda: true }, "");
-  if (document.getElementById("pedidos").classList.contains("abierto")) {
-    document.getElementById("pedidos").classList.remove("abierto");
-    return;
-  }
-  if (document.getElementById("panel").classList.contains("abierto")) {
-    document.getElementById("panel").classList.remove("abierto");
-    return;
-  }
-  if (document.getElementById("detalle").classList.contains("abierto")) {
-    cerrarDetalle();
-    return;
-  }
-  document.getElementById("confirmarSalir").classList.add("abierto");
+  const aviso = document.getElementById("avisoAtras");
+  aviso.style.display = "block";
+  clearTimeout(avisoTimer);
+  avisoTimer = setTimeout(() => { aviso.style.display = "none"; }, 2000);
 });
-document.getElementById("quedarme").onclick = () => {
-  document.getElementById("confirmarSalir").classList.remove("abierto");
-};
-document.getElementById("siSalir").onclick = () => {
-  salirConfirmado = true;
-  history.go(-2);
-};
 const buscarEl = document.getElementById("buscar");
 const borrarEl = document.getElementById("borrarBuscar");
 buscarEl.oninput = () => {
