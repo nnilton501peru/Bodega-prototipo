@@ -7,10 +7,10 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#1b1f24;font-size:18px;padding-bottom:96px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-header{background:#14532d;color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+header{background:#0891b2;color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
 header .nombre{font-size:20px;font-weight:700;line-height:1.2;text-align:center}
 header .botones{display:flex;gap:6px;flex-shrink:0}
-header button{height:44px;border:none;border-radius:10px;background:#1f6b3d;color:#fff;font-size:15px;cursor:pointer;padding:0 10px}
+header button{height:44px;border:none;border-radius:10px;background:#0e7490;color:#fff;font-size:15px;cursor:pointer;padding:0 10px}
 header button.icono{width:44px;font-size:20px;padding:0}
 .buscar{padding:12px 12px 8px}
 .caja{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #cfd6de;border-radius:12px;padding:0 8px 0 12px;height:52px}
@@ -25,21 +25,21 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .cats button.activa{background:#14532d;border-color:#14532d;color:#fff}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 12px}
 .card{background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:2px solid transparent}
-.card.enCarrito{border-color:#2563eb}
+.card.enCarrito{border-color:#0891b2}
 .foto{height:150px;background:#eaf1f7;display:flex;align-items:center;justify-content:center;font-size:52px;cursor:pointer}
 .foto img{width:100%;height:100%;object-fit:contain;background:#fff}
 .info{padding:10px;display:flex;flex-direction:column;flex:1}
 .nombreProd{font-size:17px;line-height:1.25;min-height:42px;cursor:pointer}
 .precio{font-size:22px;font-weight:700;margin-top:4px}
 .acciones{margin-top:auto;padding-top:8px}
-.btn-add{width:100%;height:50px;border:none;border-radius:12px;background:#15803d;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
-.ctrl{display:flex;align-items:center;justify-content:space-between;background:#dbeafe;color:#1e3a8a;border:2px solid #2563eb;border-radius:12px;height:50px}
-.ctrl button{background:none;border:none;color:#1e3a8a;font-size:26px;width:50px;height:50px;cursor:pointer}
+.btn-add{width:100%;height:50px;border:none;border-radius:12px;background:#0369a1;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+.ctrl{display:flex;align-items:center;justify-content:space-between;background:#cffafe;color:#0c4a6e;border:2px solid #0891b2;border-radius:12px;height:50px}
+.ctrl button{background:none;border:none;color:#0c4a6e;font-size:26px;width:50px;height:50px;cursor:pointer}
 .ctrl span{font-size:18px;font-weight:700}
 .agotado{background:#fde2e2;color:#9b1c1c;text-align:center;padding:14px 8px;border-radius:12px;font-weight:700;font-size:17px}
 .aviso{padding:20px;text-align:center;font-size:17px;grid-column:1/-1;color:#333}
-.barra{position:fixed;bottom:0;left:0;right:0;background:#1f2937;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10}
-.barra .total{font-size:24px;font-weight:700}
+.barra{position:fixed;bottom:0;left:0;right:0;background:#fef3c7;color:#1c1917;border-top:2px solid #fcd34d;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+.barra .total{font-size:24px;font-weight:700;color:#0c4a6e}
 .barra button{height:52px;padding:0 18px;border:none;border-radius:12px;background:#f97316;color:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
 .panel{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:20}
 .panel.abierto{display:flex}
@@ -83,15 +83,14 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .btnRojo{background:#dc2626;color:#fff}
 .btnGris{background:#e5e7eb;color:#1f2937}
 .catItem{flex:0 0 auto;width:72px;text-align:center;cursor:pointer}
-.catCaja{width:72px;height:72px;border-radius:16px;background:#efece6;color:#111827;border:3px solid transparent;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.catCaja.activa{background:#14532d;border-color:#14532d;color:#ffffff}
+.catCaja{width:72px;height:72px;border-radius:16px;background:#fef3c7;color:#0c4a6e;border:3px solid transparent;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.catCaja.activa{background:#0891b2;border-color:#0891b2;color:#ffffff}
 .catCaja img{width:100%;height:100%;object-fit:cover}
-.catNombre{font-size:13px;color:#111827;margin-top:6px}
-.catNombre.activa{font-weight:700;color:#14532d}
+.catNombre{font-size:13px;color:#0c4a6e;margin-top:6px}
+.catNombre.activa{font-weight:700;color:#0c4a6e}
 .btnVerde{background:#15803d;color:#fff}
 input{-webkit-user-select:text;user-select:text}
 .pie{text-align:center;font-size:11px;color:#9ca3af;padding:14px 12px 8px}
-.avisoAtras{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,340px);background:rgba(31,41,55,.95);color:#ffffff;padding:18px 20px;border-radius:16px;font-size:20px;font-weight:700;text-align:center;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -111,7 +110,7 @@ input{-webkit-user-select:text;user-select:text}
 </div>
 <div class="cats" id="cats"></div>
 <main class="grid" id="grid"></main>
-<footer class="pie">v1.0 · Mauricio</footer>
+<footer class="pie">v1.1 · Mauricio</footer>
 
 <div class="barra">
   <div>
@@ -160,7 +159,7 @@ input{-webkit-user-select:text;user-select:text}
   </div>
 </div>
 
-<div id="avisoAtras" class="avisoAtras" style="display:none">Toca atrás otra vez para salir</div>
+
 
 <script>
 // ====== CONFIGURACIÓN ======
@@ -370,7 +369,9 @@ function refrescarTarjeta(id){
   const temp = document.createElement("div");
   pintarProductos(temp);
   const nueva = temp.querySelector('[data-id="' + id + '"]');
-  if (nueva) viejo.replaceWith(nueva); else pintarProductos();
+  if (!nueva){ pintarProductos(); return; }
+  viejo.className = nueva.className;
+  viejo.querySelector(".acciones").replaceWith(nueva.querySelector(".acciones"));
 }
 
 function abrirDetalle(id){
@@ -608,32 +609,7 @@ document.getElementById("siBorrar").onclick = () => {
   aviso.hidden = false;
   setTimeout(() => { aviso.hidden = true; }, 2500);
 };
-let ultimoAtras = 0;
-let avisoTimer = null;
-history.pushState({ tienda: true }, "");
-window.addEventListener("popstate", () => {
-  const pedidosAbiertos = document.getElementById("pedidos").classList.contains("abierto");
-  const carritoAbierto = document.getElementById("panel").classList.contains("abierto");
-  const detalleAbierto = document.getElementById("detalle").classList.contains("abierto");
-  if (pedidosAbiertos || carritoAbierto || detalleAbierto){
-    history.pushState({ tienda: true }, "");
-    if (pedidosAbiertos) document.getElementById("pedidos").classList.remove("abierto");
-    else if (carritoAbierto) document.getElementById("panel").classList.remove("abierto");
-    else cerrarDetalle();
-    return;
-  }
-  const ahora = Date.now();
-  if (ahora - ultimoAtras < 2000){
-    history.back();
-    return;
-  }
-  ultimoAtras = ahora;
-  history.pushState({ tienda: true }, "");
-  const aviso = document.getElementById("avisoAtras");
-  aviso.style.display = "block";
-  clearTimeout(avisoTimer);
-  avisoTimer = setTimeout(() => { aviso.style.display = "none"; }, 2000);
-});
+
 const buscarEl = document.getElementById("buscar");
 const borrarEl = document.getElementById("borrarBuscar");
 buscarEl.oninput = () => {
