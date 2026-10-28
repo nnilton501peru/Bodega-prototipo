@@ -623,6 +623,52 @@ borrarEl.onclick = () => {
 };
 document.getElementById("titulo").textContent = CONFIG.nombre;
 
+// ====== BOTÓN ATRÁS DEL CELULAR ======
+// Cada pantalla abierta (foto grande, carrito, Mis pedidos, confirmar borrado)
+// tiene su propio paso en el historial; atrás cierra la última abierta
+// en vez de salir de la página.
+(function(){
+  const IDS = ["confirmar", "detalle", "panel", "pedidos"]; // de arriba hacia abajo
+  const el = id => document.getElementById(id);
+  const abiertas = () => IDS.filter(id => el(id).classList.contains("abierto"));
+  let pasos = 0;      // cuántos pasos de historial hemos agregado
+  let cerrando = false;
+
+  // Cierra visualmente la pantalla más arriba (sin tocar el historial)
+  function cerrarArriba(){
+    const a = abiertas();
+    if (!a.length) return;
+    if (a[0] === "detalle") detalleId = null;
+    el(a[0]).classList.remove("abierto");
+  }
+
+  // Vigila cuando se abre o se cierra una pantalla y sincroniza el historial
+  function sincronizar(){
+    if (cerrando) return;
+    const n = abiertas().length;
+    while (pasos < n){ history.pushState({pantalla: true}, ""); pasos++; }
+    if (pasos > n){
+      // se cerró con un botón de la página: quitamos los pasos sobrantes
+      const quitar = pasos - n;
+      pasos = n;
+      cerrando = true;
+      history.go(-quitar);
+      setTimeout(() => { cerrando = false; sincronizar(); }, 150);
+    }
+  }
+
+  window.addEventListener("popstate", () => {
+    if (cerrando) return;
+    if (pasos > 0){
+      pasos--;
+      cerrarArriba();
+    }
+  });
+
+  const obs = new MutationObserver(sincronizar);
+  IDS.forEach(id => obs.observe(el(id), {attributes: true, attributeFilter: ["class"]}));
+})();
+
 actualizarBarra();
 cargarHoja();
 </script>
