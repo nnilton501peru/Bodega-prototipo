@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Delivery Playazo</title>
+<title>Delivery Playazo v1.4</title>
+<meta name="theme-color" content="#0754a5">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#1b1f24;font-size:18px;padding-bottom:96px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -19,7 +20,7 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .caja input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 .borrar{background:#15803d;color:#fff;border:none;border-radius:10px;height:38px;padding:0 14px;font-size:16px;font-weight:700;cursor:pointer}
 .borrar[hidden]{display:none}
-.cats{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px;scrollbar-width:none}
+.cats{display:flex;gap:12px;overflow-x:auto;padding:6px 12px 14px;scrollbar-width:none;scroll-padding-inline:12px;align-items:flex-start}
 .cats::-webkit-scrollbar{display:none}
 .cats button{flex:0 0 auto;min-height:48px;padding:10px 16px;font-size:17px;border:2px solid #cfd6de;border-radius:12px;background:#fff;color:#1b1f24;cursor:pointer}
 .cats button.activa{background:#14532d;border-color:#14532d;color:#fff}
@@ -54,7 +55,7 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .vacio{text-align:center;color:#555;padding:20px}
 .totalPanel{font-size:22px;font-weight:700;margin-top:14px;text-align:right}
 .wa{width:100%;height:56px;border:none;border-radius:14px;background:#25d366;color:#fff;font-size:19px;font-weight:700;margin-top:14px;cursor:pointer}
-.cerrar{width:100%;height:48px;border:none;background:#eef2f6;border-radius:12px;font-size:17px;margin-top:10px;cursor:pointer;color:#1b1f24}
+.cerrar{width:100%;height:48px;border:none;background:#eef2f6;border-radius:12px;font-size:17px;margin-top:10px;cursor:pointer;color:#1b1f24}\n.hoja.det > .cerrar{height:56px;background:#087e9a;color:#fff;font-size:20px;font-weight:800;border:2px solid #05657c;box-shadow:0 3px 0 #064e63}
 .fotoGrande{width:100%;max-width:400px;aspect-ratio:1/1;margin:0 auto 14px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:120px;overflow:hidden;border:1px solid #e3e7ec}
 .fotoGrande img{width:100%;height:100%;object-fit:contain}
 .nombreGrande{font-size:24px;line-height:1.25}
@@ -82,15 +83,26 @@ header button.icono{width:44px;font-size:20px;padding:0}
 .fila2 button{flex:1;height:50px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer}
 .btnRojo{background:#dc2626;color:#fff}
 .btnGris{background:#e5e7eb;color:#1f2937}
-.catItem{flex:0 0 auto;width:72px;text-align:center;cursor:pointer}
-.catCaja{width:72px;height:72px;border-radius:16px;background:#fef3c7;color:#0c4a6e;border:3px solid transparent;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.catCaja.activa{background:#0891b2;border-color:#0891b2;color:#ffffff}
-.catCaja img{width:100%;height:100%;object-fit:cover}
-.catNombre{font-size:13px;color:#0c4a6e;margin-top:6px}
-.catNombre.activa{font-weight:700;color:#0c4a6e}
+.catItem{flex:0 0 88px;width:88px;text-align:center;cursor:pointer;touch-action:manipulation}
+.catCaja{width:88px;height:88px;border-radius:18px;background:#fef3c7;color:#0c4a6e;border:3px solid #fef3c7;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.catCaja.activa{background:#0891b2;border-color:#0891b2;color:#ffffff;box-shadow:0 0 0 2px #ffffff,0 0 0 4px #0891b2}
+.catCaja img{width:100%;height:100%;object-fit:cover;display:block}
+.catNombre{font-size:18px;line-height:1.15;color:#164e63;margin-top:8px;font-weight:600;overflow-wrap:anywhere;min-height:2.3em;display:flex;align-items:flex-start;justify-content:center}
+.catNombre.activa{font-weight:800;color:#075985}
 .btnVerde{background:#15803d;color:#fff}
 input{-webkit-user-select:text;user-select:text}
 .pie{text-align:center;font-size:11px;color:#9ca3af;padding:14px 12px 8px}
+
+/* ===== Delivery Playazo v1.4: portada promocional — corrección móvil v1.4 ===== */
+.portada{padding:12px 12px 4px;background:#f4f6f8}
+.portada-marco{max-width:1100px;margin:0 auto;overflow:hidden;border-radius:20px;box-shadow:0 5px 18px rgba(0,40,90,.16);background:transparent;line-height:0;border:0}
+.portada-img{display:block;width:100%;height:auto;min-height:0;object-fit:contain;object-position:center}
+.portada-cta{display:flex;justify-content:center;padding:10px 0 4px}
+.portada-cta button{min-height:54px;padding:0 26px;border:0;border-radius:999px;background:#facc15;color:#10223d;font-size:20px;font-weight:800;box-shadow:0 3px 0 #dca900;cursor:pointer}
+.portada-cta button:active{transform:translateY(1px)}
+.pie{font-size:12px}
+@media(min-width:760px){.portada{padding:18px 18px 6px}.buscar,.cats{max-width:1100px;margin-left:auto;margin-right:auto}.grid{max-width:1100px;margin:0 auto;grid-template-columns:repeat(4,minmax(0,1fr));}.foto{height:190px}}
+
 </style>
 </head>
 <body>
@@ -101,6 +113,13 @@ input{-webkit-user-select:text;user-select:text}
   <button class="icono" id="pantalla" aria-label="Pantalla completa">⛶</button>
 </header>
 
+<section class="portada" aria-label="Bienvenida a Delivery Playazo">
+  <div class="portada-marco">
+    <img class="portada-img" src="portada-playazo-v1.4.jpg" alt="Portada de Delivery Playazo con playa tropical y helados Yámboly" fetchpriority="high">
+  </div>
+  <div class="portada-cta"><button type="button" id="verProductos">🛒 Ver productos</button></div>
+</section>
+
 <div class="buscar">
   <div class="caja">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -110,7 +129,7 @@ input{-webkit-user-select:text;user-select:text}
 </div>
 <div class="cats" id="cats"></div>
 <main class="grid" id="grid"></main>
-<footer class="pie">v1.1 · Mauricio</footer>
+<footer class="pie">Delivery Playazo v1.4 · ¡Tu antojo, directo a la playa!</footer>
 
 <div class="barra">
   <div>
@@ -180,12 +199,12 @@ const ICONOS = {
   "Cigarros": SVG_INI + '<rect x="4" y="7" width="16" height="11" rx="1"/><path d="M4 11h16"/><path d="M8 7V4h8v3"/></svg>',
   "Otros": SVG_INI + '<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>'
 };
-const PEDIDOS_KEY = "pedidos_bodega_maya_kia";
+const PEDIDOS_KEY = "pedidos_delivery_playazo_v1_4";
 
 let productos = [];
 let categoria = "Todas";
 let detalleId = null;
-const CARRITO_KEY = "carrito_bodega_maya_kia";
+const CARRITO_KEY = "carrito_delivery_playazo_v1_4";
 const carrito = cargarCarrito();
 
 function cargarCarrito(){
@@ -398,6 +417,7 @@ function pintarDetalle(){
   precio.className = "precioGrande";
   precio.textContent = "S/ " + p.precio.toFixed(2);
   const acc = document.createElement("div");
+  acc.className = "detalleAcciones";
   if (p.agotado){
     acc.innerHTML = '<div class="agotado">Agotado</div>';
   } else if (cant === 0){
@@ -413,13 +433,34 @@ function pintarDetalle(){
   cont.parentElement.classList.add("det");
 }
 
+function actualizarDetalleAcciones(){
+  const p = productos.find(x => x.id === detalleId);
+  const anterior = document.querySelector("#detContenido .detalleAcciones");
+  if (!p || !anterior) return;
+  const acc = document.createElement("div");
+  acc.className = "detalleAcciones";
+  const cant = carrito[p.id] || 0;
+  if (p.agotado){
+    acc.innerHTML = '<div class="agotado">Agotado</div>';
+  } else if (cant === 0){
+    const b = document.createElement("button");
+    b.className = "btn-add";
+    b.textContent = "+ Agregar al carrito";
+    b.onclick = () => cambiar(p.id, 1);
+    acc.appendChild(b);
+  } else {
+    acc.appendChild(controles(p.id, cant));
+  }
+  anterior.replaceWith(acc);
+}
+
 function cambiar(id, delta){
   const n = (carrito[id] || 0) + delta;
   if (n <= 0) delete carrito[id]; else carrito[id] = n;
   guardarCarrito();
   refrescarTarjeta(id);
   actualizarBarra();
-  if (detalleId) pintarDetalle();
+  if (detalleId) actualizarDetalleAcciones();
   if (document.getElementById("panel").classList.contains("abierto")) pintarCarrito();
 }
 
@@ -621,6 +662,13 @@ borrarEl.onclick = () => {
   borrarEl.hidden = true;
   pintarProductos();
 };
+document.getElementById("verProductos").onclick = () => {
+  const destino = document.getElementById("cats");
+  const altoHeader = document.querySelector("header").getBoundingClientRect().height;
+  const y = destino.getBoundingClientRect().top + window.scrollY - altoHeader - 8;
+  window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+};
+
 document.getElementById("titulo").textContent = CONFIG.nombre;
 
 // ====== BOTÓN ATRÁS DEL CELULAR ======
